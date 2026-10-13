@@ -1,15 +1,3 @@
-/**
- * @file socketServer.ts
- * @description Real-Time WebSocket Gateway powered by Socket.io.
- * Orchestrates multi-tenant rooms, 1-on-1 direct messaging, live typing relays,
- * read receipts, and O(1) in-memory presence tracking across distributed clients.
- *
- * @architecture
- * - Authentication: JWT verification during WebSocket handshake with strict error isolation.
- * - Room Partitioning: Dedicated rooms per user (`user:<userId>`) and per hiring conversation (`conversation:<conversationId>`).
- * - Presence Tracking: In-memory hash set mapping user IDs to active socket connections. Emits presence updates only on state boundary transitions (0 -> 1 or 1 -> 0).
- */
-
 import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer, type Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
@@ -53,20 +41,29 @@ export function getOnlineUsers(userIds: string[]): Record<string, boolean> {
  * @returns Configured SocketIOServer instance.
  */
 export function initSocketServer(httpServer: HttpServer): SocketIOServer {
-  const allowedOrigins = [
+  const rawFrontendUrls = [
     process.env['FRONTEND_URL'],
     process.env['CLIENT_URL'],
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://localhost:3000',
-    'https://career-nest-sand.vercel.app',
   ].filter(Boolean) as string[];
+
+  const allowedOrigins = rawFrontendUrls.flatMap((u) =>
+    u.split(',').map((url) => url.trim().replace(/\/$/, ''))
+  );
 
   io = new SocketIOServer(httpServer, {
     cors: {
       origin: (origin, callback) => {
         if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+        const normalized = origin.replace(/\/$/, '');
+        if (
+          allowedOrigins.includes(normalized) ||
+          normalized.endsWith('.vercel.app') ||
+          /^https:\/\/.*\.vercel\.app$/.test(normalized) ||
+          /^http:\/\/localhost(:\d+)?$/.test(normalized)
+        ) {
           return callback(null, true);
         }
         if (process.env['NODE_ENV'] !== 'production') {

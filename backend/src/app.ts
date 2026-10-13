@@ -31,21 +31,59 @@ app.set('trust proxy', 1);
 // =============================================================================
 app.use(helmet());
 
-// CORS: allow both local dev and production frontend origins
-const allowedOrigins = [
+// CORS: allow local dev, production frontend, and all Vercel deployments (previews & production)
+const rawFrontendUrls = [
+  process.env['FRONTEND_URL'],
+  process.env['CLIENT_URL'],
   'http://localhost:5173',
-  process.env['FRONTEND_URL'] ?? '',
-].filter(Boolean);
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+].filter(Boolean) as string[];
+
+// Support comma-separated URLs and strip any trailing slashes
+const allowedOrigins = rawFrontendUrls.flatMap((u) =>
+  u.split(',').map((url) => url.trim().replace(/\/$/, ''))
+);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. mobile apps, Postman, server-to-server)
+      // Allow requests with no origin (e.g. mobile apps, curl, Postman, server-to-server)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      const normalizedOrigin = origin.replace(/\/$/, '');
+
+      // 1. Direct match with configured origins
+      if (allowedOrigins.includes(normalizedOrigin)) {
+        return callback(null, true);
+      }
+
+      // 2. Allow any Vercel domain (*.vercel.app - matches production and preview branches)
+      if (
+        normalizedOrigin.endsWith('.vercel.app') ||
+        /^https:\/\/.*\.vercel\.app$/.test(normalizedOrigin)
+      ) {
+        return callback(null, true);
+      }
+
+      // 3. Allow localhost on any port
+      if (
+        /^http:\/\/localhost(:\d+)?$/.test(normalizedOrigin) ||
+        /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(normalizedOrigin)
+      ) {
+        return callback(null, true);
+      }
+
+      // 4. In development mode, allow any origin
+      if (process.env['NODE_ENV'] !== 'production') {
+        return callback(null, true);
+      }
+
       callback(new Error(`CORS: origin ${origin} not allowed`));
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   }),
 );
 
