@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="frontend/public/logo.png" width="100" height="100" alt="ZingHire Logo" style="border-radius: 22px;" />
+
 # ⚡ ZingHire
 
 **Next-Generation AI-Powered Campus Recruitment & Placement Platform**
