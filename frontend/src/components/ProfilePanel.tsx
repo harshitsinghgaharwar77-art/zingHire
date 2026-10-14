@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { X, Save, Loader2, LogOut, Briefcase, GraduationCap, Shield } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { X, Save, Loader2, LogOut, Briefcase, GraduationCap, Shield, Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/authStore';
 import api from '../lib/axios';
@@ -13,28 +13,35 @@ interface StudentProfile {
   firstName: string;
   lastName: string;
   college: string;
+  branch?: string;
   cgpa: number;
   experienceYears: number;
+  avatarUrl?: string | null;
   parsedSkills: string[];
 }
 
 interface RecruiterProfile {
   companyName: string;
   designation: string;
+  avatarUrl?: string | null;
 }
 
 export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
-  const { user, logout } = useAuthStore();
+  const { user, logout, updateUser } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Student State
   const [studentForm, setStudentForm] = useState<StudentProfile>({
     firstName: '',
     lastName: '',
     college: '',
+    branch: '',
     cgpa: 0,
     experienceYears: 0,
+    avatarUrl: null,
     parsedSkills: [],
   });
 
@@ -42,6 +49,7 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
   const [recruiterForm, setRecruiterForm] = useState<RecruiterProfile>({
     companyName: '',
     designation: '',
+    avatarUrl: null,
   });
 
   const fetchProfile = useCallback(async () => {
@@ -52,16 +60,22 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
       if (user.role === 'STUDENT') {
         const { data } = await api.get<{ data: StudentProfile }>('/student/profile');
         setStudentForm(data.data);
+        if (data.data.avatarUrl) {
+          updateUser({ avatarUrl: data.data.avatarUrl });
+        }
       } else if (user.role === 'RECRUITER') {
         const { data } = await api.get<{ data: RecruiterProfile }>('/student/recruiter-profile');
         setRecruiterForm(data.data);
+        if (data.data.avatarUrl) {
+          updateUser({ avatarUrl: data.data.avatarUrl });
+        }
       }
     } catch {
       toast.error('Failed to load profile details.');
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, updateUser]);
 
   useEffect(() => {
     if (isOpen) {
@@ -75,6 +89,52 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
       document.body.style.overflow = 'auto';
     };
   }, [isOpen, fetchProfile]);
+
+  const handleAvatarFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file (JPG, PNG, WebP).');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5 MB.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    setUploadingAvatar(true);
+    try {
+      const { data } = await api.post<{ success: boolean; data: { avatarUrl: string } }>(
+        '/student/avatar',
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      );
+
+      const newUrl = data.data.avatarUrl;
+      if (user?.role === 'STUDENT') {
+        setStudentForm((prev) => ({ ...prev, avatarUrl: newUrl }));
+      } else if (user?.role === 'RECRUITER') {
+        setRecruiterForm((prev) => ({ ...prev, avatarUrl: newUrl }));
+      }
+      updateUser({ avatarUrl: newUrl });
+      toast.success('Profile photo updated successfully!');
+    } catch (err: unknown) {
+      console.error('Avatar upload failed:', err);
+      toast.error('Failed to upload profile photo.');
+    } finally {
+      setUploadingAvatar(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   const handleSave = async () => {
     if (!user) return;
@@ -108,6 +168,10 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
     return user?.email?.substring(0, 2).toUpperCase() || 'U';
   };
 
+  const currentAvatarUrl = user?.role === 'STUDENT' 
+    ? (studentForm.avatarUrl || user?.avatarUrl)
+    : (recruiterForm.avatarUrl || user?.avatarUrl);
+
   if (!isOpen) return null;
 
   return (
@@ -118,19 +182,65 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
         onClick={onClose}
       />
 
+      {/* Hidden File Input for Avatar Upload */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/jpg,image/avif"
+        className="hidden"
+        onChange={(e) => void handleAvatarFileSelect(e)}
+      />
+
       {/* Slide-in Panel (Wellfound Style) */}
       <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white dark:bg-warm-darkCard shadow-2xl z-[110] transform transition-transform duration-300 ease-in-out flex flex-col border-l border-warm-border dark:border-warm-darkBorder">
         
         {/* Header */}
         <div className="p-5 border-b border-warm-border dark:border-warm-darkBorder flex items-center justify-between bg-warm-sandTint/30 dark:bg-warm-darkElevated/30">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-xl bg-warm-terracotta text-white flex items-center justify-center shadow-xs ring-4 ring-warm-sandTint dark:ring-warm-darkBorder">
-              <span className="font-bold text-base tracking-wide">{getInitials()}</span>
+            {/* Interactive Avatar Upload Box */}
+            <div 
+              onClick={() => !uploadingAvatar && fileInputRef.current?.click()}
+              className="relative group cursor-pointer w-12 h-12 rounded-xl bg-warm-terracotta text-white flex items-center justify-center shadow-xs ring-4 ring-warm-sandTint dark:ring-warm-darkBorder overflow-hidden shrink-0 transition-transform active:scale-95"
+              title="Click to change profile photo"
+            >
+              {currentAvatarUrl ? (
+                <img 
+                  src={currentAvatarUrl} 
+                  alt="Profile Avatar" 
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              ) : (
+                <span className="font-bold text-base tracking-wide">{getInitials()}</span>
+              )}
+
+              {/* Hover / Loading Overlay */}
+              <div 
+                className={`absolute inset-0 bg-black/55 backdrop-blur-[1px] flex flex-col items-center justify-center text-white transition-opacity duration-200 ${
+                  uploadingAvatar ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                }`}
+              >
+                {uploadingAvatar ? (
+                  <Loader2 size={18} className="animate-spin text-white" />
+                ) : (
+                  <>
+                    <Camera size={16} />
+                    <span className="text-[9px] font-semibold tracking-wider mt-0.5">EDIT</span>
+                  </>
+                )}
+              </div>
+
+              {/* Corner Camera Badge indicator */}
+              <div className="absolute -bottom-0.5 -right-0.5 bg-white dark:bg-warm-darkCard text-warm-charcoal dark:text-warm-darkCharcoal rounded-full p-0.5 shadow-sm border border-warm-border/80">
+                <Camera size={9} className="text-warm-terracotta" />
+              </div>
             </div>
+
             <div>
-              <h2 className="text-base font-bold text-warm-charcoal dark:text-warm-darkCharcoal" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>
-                Profile Settings
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-bold text-warm-charcoal dark:text-warm-darkCharcoal" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>
+                  Profile Settings
+                </h2>
+              </div>
               <p className="text-xs text-warm-muted dark:text-warm-darkMuted font-medium">{user?.email}</p>
             </div>
           </div>
@@ -163,6 +273,15 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
                     {user?.role}
                   </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingAvatar}
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-warm-terracotta hover:underline cursor-pointer"
+                >
+                  <Camera size={13} />
+                  Change photo
+                </button>
               </div>
 
               {user?.role === 'STUDENT' && (
@@ -193,10 +312,23 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
                     <input
                       type="text"
                       value={studentForm.college}
+                      placeholder="e.g. Indian Institute of Information Technology"
                       onChange={(e) => setStudentForm({ ...studentForm, college: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg text-xs text-warm-charcoal dark:text-warm-darkCharcoal focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
                     />
                   </div>
+
+                  <div className="space-y-1">
+                    <label className="type-label block text-warm-charcoal dark:text-warm-darkCharcoal">Branch / Stream</label>
+                    <input
+                      type="text"
+                      value={studentForm.branch || ''}
+                      placeholder="e.g. Computer Science, Electronics, Mechanical"
+                      onChange={(e) => setStudentForm({ ...studentForm, branch: e.target.value })}
+                      className="w-full px-3 py-2 bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg text-xs text-warm-charcoal dark:text-warm-darkCharcoal focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
+                    />
+                  </div>
+
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">

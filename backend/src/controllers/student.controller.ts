@@ -29,9 +29,11 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
         firstName:       true,
         lastName:        true,
         college:         true,
+        branch:          true,
         cgpa:            true,
         experienceYears: true,
         resumeUrl:       true,
+        avatarUrl:       true,
         parsedSkills:    true,
       },
     });
@@ -66,12 +68,14 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
 
   const { userId } = req.user;
 
-  const { firstName, lastName, college, cgpa, experienceYears } = req.body as {
+  const { firstName, lastName, college, branch, cgpa, experienceYears, avatarUrl } = req.body as {
     firstName?: string;
     lastName?: string;
     college?: string;
+    branch?: string;
     cgpa?: number;
     experienceYears?: number;
+    avatarUrl?: string;
   };
 
   // Validate CGPA range
@@ -90,16 +94,20 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
         ...(firstName !== undefined && { firstName: firstName.trim() }),
         ...(lastName  !== undefined && { lastName:  lastName.trim()  }),
         ...(college   !== undefined && { college:   college.trim()   }),
+        ...(branch    !== undefined && { branch:    branch.trim()    }),
         ...(cgpaFloat !== undefined && { cgpa:      cgpaFloat        }),
         ...(expFloat  !== undefined && { experienceYears: expFloat   }),
+        ...(avatarUrl !== undefined && { avatarUrl: avatarUrl.trim() }),
       },
       create: {
         userId,
         firstName: firstName !== undefined ? firstName.trim() : '',
         lastName:  lastName !== undefined ? lastName.trim() : '',
         college:   college !== undefined ? college.trim() : 'Unknown College',
+        branch:    branch !== undefined ? branch.trim() : null,
         cgpa:      cgpaFloat !== undefined ? cgpaFloat : 0,
         experienceYears: expFloat !== undefined ? expFloat : 0,
+        avatarUrl: avatarUrl !== undefined ? avatarUrl.trim() : null,
         parsedSkills: [],
       }
     });
@@ -107,12 +115,24 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
     // Return updated profile
     const updated = await prisma.studentProfile.findUnique({
       where: { userId },
-      select: { id: true, firstName: true, lastName: true, college: true, cgpa: true, experienceYears: true, resumeUrl: true, parsedSkills: true },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        college: true,
+        branch: true,
+        cgpa: true,
+        experienceYears: true,
+        resumeUrl: true,
+        avatarUrl: true,
+        parsedSkills: true,
+      },
     });
 
     res.status(200).json({ success: true, message: 'Profile updated successfully.', data: updated });
   } catch (dbError) {
-    console.error('[DB] studentProfile.updateMany (updateProfile) failed:', dbError);
+    console.error('[DB] studentProfile.upsert (updateProfile) failed:', dbError);
+
     res.status(500).json({ success: false, message: 'Failed to update profile.' });
   }
 };
@@ -226,6 +246,7 @@ export const getRecruiterProfile = async (req: Request, res: Response): Promise<
         id: true,
         companyName: true,
         designation: true,
+        avatarUrl: true,
       },
     });
 
@@ -242,7 +263,7 @@ export const getRecruiterProfile = async (req: Request, res: Response): Promise<
 };
 
 /**
- * Updates organizational metadata (company name, designation) for the authenticated recruiter.
+ * Updates organizational metadata (company name, designation, avatarUrl) for the authenticated recruiter.
  *
  * @param {Request} req - Express request containing sanitized partial updates in req.body.
  * @param {Response} res - Express response returning the mutated entity.
@@ -256,9 +277,10 @@ export const updateRecruiterProfile = async (req: Request, res: Response): Promi
   }
 
   const { userId } = req.user;
-  const { companyName, designation } = req.body as {
+  const { companyName, designation, avatarUrl } = req.body as {
     companyName?: string;
     designation?: string;
+    avatarUrl?: string;
   };
 
   try {
@@ -267,6 +289,7 @@ export const updateRecruiterProfile = async (req: Request, res: Response): Promi
       data: {
         ...(companyName !== undefined && { companyName: companyName.trim() }),
         ...(designation !== undefined && { designation: designation.trim() }),
+        ...(avatarUrl !== undefined && { avatarUrl: avatarUrl.trim() }),
       },
     });
 
@@ -277,7 +300,7 @@ export const updateRecruiterProfile = async (req: Request, res: Response): Promi
 
     const updated = await prisma.recruiterProfile.findUnique({
       where: { userId },
-      select: { id: true, companyName: true, designation: true },
+      select: { id: true, companyName: true, designation: true, avatarUrl: true },
     });
 
     res.status(200).json({ success: true, message: 'Profile updated successfully.', data: updated });
@@ -286,3 +309,72 @@ export const updateRecruiterProfile = async (req: Request, res: Response): Promi
     res.status(500).json({ success: false, message: 'Failed to update recruiter profile.' });
   }
 };
+
+/**
+ * Uploads a profile avatar photo to Cloudinary and saves the URL on the user's profile.
+ * Supports both STUDENT and RECRUITER users.
+ */
+export const uploadAvatar = async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) {
+    res.status(401).json({ success: false, message: 'Unauthorized.' });
+    return;
+  }
+
+  if (!req.file) {
+    res.status(400).json({
+      success: false,
+      message: 'No image file received. Attach an image with the field name "avatar".',
+    });
+    return;
+  }
+
+  const { userId, role } = req.user;
+  const fileInfo = req.file as Express.Multer.File & { secure_url?: string; path?: string };
+  const avatarUrl = fileInfo.secure_url ?? fileInfo.path ?? '';
+
+  if (!avatarUrl || !avatarUrl.startsWith('http')) {
+    console.error('[UploadAvatar] Could not resolve a valid Cloudinary URL from req.file');
+    res.status(500).json({ success: false, message: 'Upload succeeded but could not get image URL.' });
+    return;
+  }
+
+  try {
+    if (role === 'STUDENT') {
+      await prisma.studentProfile.upsert({
+        where: { userId },
+        update: { avatarUrl },
+        create: {
+          userId,
+          firstName: '',
+          lastName: '',
+          college: 'Unknown College',
+          cgpa: 0,
+          experienceYears: 0,
+          parsedSkills: [],
+          avatarUrl,
+        },
+      });
+    } else if (role === 'RECRUITER') {
+      await prisma.recruiterProfile.upsert({
+        where: { userId },
+        update: { avatarUrl },
+        create: {
+          userId,
+          companyName: '',
+          designation: '',
+          avatarUrl,
+        },
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile picture updated successfully.',
+      data: { avatarUrl },
+    });
+  } catch (error) {
+    console.error('[UploadAvatar] Failed to save avatar URL to DB:', error);
+    res.status(500).json({ success: false, message: 'Failed to save profile picture.' });
+  }
+};
+

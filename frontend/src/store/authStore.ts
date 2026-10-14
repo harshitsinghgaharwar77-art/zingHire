@@ -10,6 +10,7 @@ export interface AuthUser {
   userId: string;
   role:   Role;
   email?: string;
+  avatarUrl?: string | null;
 }
 
 interface AuthState {
@@ -17,8 +18,9 @@ interface AuthState {
   user:   AuthUser | null;
   isAuth: boolean;
   // Actions
-  setAuth:  (token: string, user: AuthUser) => void;
-  logout:   () => void;
+  setAuth:    (token: string, user: AuthUser) => void;
+  updateUser: (patch: Partial<AuthUser>) => void;
+  logout:     () => void;
 }
 
 /**
@@ -33,7 +35,9 @@ export const useAuthStore = create<AuthState>()(
       user:   null,
       isAuth: false,
 
-      setAuth: (token, user) => set({ token, user, isAuth: true }),
+      setAuth:    (token, user) => set({ token, user, isAuth: true }),
+      updateUser: (patch) => set((state) => ({ user: state.user ? { ...state.user, ...patch } : null })),
+
 
       logout: () => {
         // @architecture

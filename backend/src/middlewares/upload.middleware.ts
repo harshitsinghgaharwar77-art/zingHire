@@ -114,3 +114,62 @@ export const uploadResumeSingle = (req: Request, res: Response, next: NextFuncti
     next();
   });
 };
+
+// =============================================================================
+// Avatar Storage & Middleware (Images only)
+// =============================================================================
+const avatarCloudinaryStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder:          'careernest_avatars',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
+    resource_type:   'image',
+    use_filename:    false,
+    unique_filename: true,
+  } as object,
+});
+
+const avatarFileFilter = (
+  _req: Request,
+  file: Express.Multer.File,
+  cb:   multer.FileFilterCallback,
+): void => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Invalid file type. Only image files (JPG, PNG, WebP) are accepted.'));
+  }
+};
+
+const uploadAvatar = multer({
+  storage: avatarCloudinaryStorage,
+  fileFilter: avatarFileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5 MB limit
+    files: 1,
+  },
+});
+
+export const uploadAvatarSingle = (req: Request, res: Response, next: NextFunction): void => {
+  uploadAvatar.single('avatar')(req, res, (err: unknown) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        res.status(413).json({
+          success: false,
+          message: 'Avatar image too large. Maximum allowed size is 5 MB.',
+        });
+        return;
+      }
+      res.status(400).json({ success: false, message: `Upload error: ${err.message}` });
+      return;
+    }
+
+    if (err instanceof Error) {
+      res.status(400).json({ success: false, message: err.message });
+      return;
+    }
+
+    next();
+  });
+};
+

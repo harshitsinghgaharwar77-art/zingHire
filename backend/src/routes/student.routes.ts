@@ -1,7 +1,14 @@
 import { Router } from 'express';
 import { verifyToken, requireRole } from '../middlewares/auth.middleware.js';
-import { uploadResumeSingle } from '../middlewares/upload.middleware.js';
-import { uploadResume, getProfile, updateProfile, getRecruiterProfile, updateRecruiterProfile } from '../controllers/student.controller.js';
+import { uploadResumeSingle, uploadAvatarSingle } from '../middlewares/upload.middleware.js';
+import { 
+  uploadResume, 
+  getProfile, 
+  updateProfile, 
+  getRecruiterProfile, 
+  updateRecruiterProfile,
+  uploadAvatar,
+} from '../controllers/student.controller.js';
 
 const router = Router();
 
@@ -58,6 +65,19 @@ router.put(
 );
 
 // =============================================================================
+// POST /api/student/avatar
+// =============================================================================
+// Dedicated avatar photo upload endpoint for both STUDENT and RECRUITER.
+// Streams directly to Cloudinary and persists avatarUrl on the user profile.
+// =============================================================================
+router.post(
+  '/avatar',
+  verifyToken,
+  uploadAvatarSingle,
+  uploadAvatar,
+);
+
+// =============================================================================
 // POST /api/student/resume
 // =============================================================================
 // Middleware execution order is critical — each layer is a security gate:
@@ -79,3 +99,4 @@ router.post(
 );
 
 export default router;
+

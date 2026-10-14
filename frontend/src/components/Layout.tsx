@@ -148,13 +148,18 @@ export default function Layout() {
                 {/* Avatar Button */}
                 <button
                   onClick={() => setIsProfileOpen(true)}
-                  className="w-8 h-8 ml-1 rounded-full bg-[#B85C38] dark:bg-[#D9734E] text-white flex items-center justify-center font-bold text-xs shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+                  className="w-8 h-8 ml-1 rounded-full bg-[#B85C38] dark:bg-[#D9734E] text-white flex items-center justify-center font-bold text-xs shadow-xs hover:opacity-90 transition-opacity cursor-pointer overflow-hidden ring-2 ring-warm-terracotta/20"
                   aria-label="Open profile settings"
                 >
-                  <span>
-                    {user?.email?.substring(0, 2).toUpperCase() || 'U'}
-                  </span>
+                  {user?.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="User Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <span>
+                      {user?.email?.substring(0, 2).toUpperCase() || 'U'}
+                    </span>
+                  )}
                 </button>
+
 
                 <button
                   onClick={handleLogout}
