@@ -14,6 +14,7 @@ import CircularProgress from '../../components/CircularProgress';
 import ResumeAnalyzing from '../../components/ResumeAnalyzing';
 import NotificationBell, { playNotificationChime } from '../../components/NotificationBell';
 import { useChatStore } from '../../store/chatStore';
+import { useAuthStore } from '../../store/authStore';
 import { cn } from '../../lib/cn';
 
 // =============================================================================
@@ -23,11 +24,14 @@ interface StudentProfile {
   firstName:       string;
   lastName:        string;
   college:         string;
+  branch?:         string | null;
   cgpa:            number;
   experienceYears: number;
+  avatarUrl?:      string | null;
   resumeUrl:       string | null;
   parsedSkills:    string[];
 }
+
 
 interface MatchedJob {
   matchScore: number;
@@ -208,7 +212,9 @@ export default function StudentDashboard() {
 
   // Real-time Chat state
   const openChat = useChatStore((s) => s.openChat);
+  const user = useAuthStore((s) => s.user);
   const [searchParams] = useSearchParams();
+
 
   useEffect(() => {
     const qConvId = searchParams.get('conversationId');
@@ -360,6 +366,26 @@ export default function StudentDashboard() {
 
   useEffect(() => { void fetchProfile(); void fetchMatches(); }, [fetchProfile, fetchMatches]);
 
+  useEffect(() => {
+    const handleProfileUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent<{ avatarUrl?: string; branch?: string; college?: string }>;
+      if (customEvent.detail) {
+        setProfile((prev) => prev ? {
+          ...prev,
+          ...(customEvent.detail.avatarUrl !== undefined && { avatarUrl: customEvent.detail.avatarUrl }),
+          ...(customEvent.detail.branch !== undefined && { branch: customEvent.detail.branch }),
+          ...(customEvent.detail.college !== undefined && { college: customEvent.detail.college }),
+        } : prev);
+      }
+      void fetchProfile();
+    };
+    window.addEventListener('profile:updated', handleProfileUpdated);
+    return () => {
+      window.removeEventListener('profile:updated', handleProfileUpdated);
+    };
+  }, [fetchProfile]);
+
+
   // ── Handlers ───────────────────────────────────────────────────────────────
   const handleUpload = async (file: File) => {
     if (file.type !== 'application/pdf') { toast.error('Please upload a PDF file.'); return; }
@@ -491,11 +517,19 @@ export default function StudentDashboard() {
 
         {/* Profile card */}
         <div className="enterprise-card p-5 flex flex-col items-center text-center gap-3">
-          <div className="w-13 h-13 rounded-full bg-[#B85C38] dark:bg-[#D9734E]
-                          flex items-center justify-center shadow-xs ring-4 ring-[#FAEEE9] dark:ring-[#2C241D]">
-            <span className="text-white font-bold text-lg">
-              {profile?.firstName?.[0]?.toUpperCase() ?? '?'}
-            </span>
+          <div className="w-14 h-14 rounded-full bg-[#B85C38] dark:bg-[#D9734E]
+                          flex items-center justify-center shadow-xs ring-4 ring-[#FAEEE9] dark:ring-[#2C241D] overflow-hidden">
+            {(profile?.avatarUrl || user?.avatarUrl) ? (
+              <img 
+                src={profile?.avatarUrl || user?.avatarUrl || ''} 
+                alt={displayName} 
+                className="w-full h-full object-cover" 
+              />
+            ) : (
+              <span className="text-white font-bold text-lg">
+                {profile?.firstName?.[0]?.toUpperCase() ?? '?'}
+              </span>
+            )}
           </div>
           {loadingProfile ? (
             <div className="space-y-2 w-full">
@@ -506,12 +540,18 @@ export default function StudentDashboard() {
             <>
               <div>
                 <p className="text-sm font-bold text-[#30291F] dark:text-[#F6EFE6]">{displayName}</p>
+                {profile?.branch && (
+                  <p className="text-[11px] font-semibold text-[#B85C38] dark:text-[#D9734E] mt-0.5 truncate max-w-[180px]" title={profile.branch}>
+                    {profile.branch}
+                  </p>
+                )}
                 <p className="text-xs text-[#74685C] dark:text-[#A89A8A] mt-0.5 truncate max-w-[180px]">{profile?.college ?? 'College not set'}</p>
               </div>
               <div className="flex items-center gap-2 flex-wrap justify-center">
                 <span className="px-2.5 py-0.5 bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] border border-[#EFC8B9] dark:border-[rgba(217,115,78,0.32)] text-[#B85C38] dark:text-[#D9734E] text-xs font-semibold rounded-md">
                   CGPA {profile?.cgpa.toFixed(1) ?? '—'}
                 </span>
+
                 <span className="px-2 py-0.5 bg-[#F3EBDD] dark:bg-[#2C241D] text-[#74685C] dark:text-[#D8CEBF] text-xs font-medium rounded-md border border-[#E9DFD1] dark:border-[#382E25]">
                   {profile?.experienceYears ?? 0} yrs
                 </span>
@@ -641,9 +681,13 @@ export default function StudentDashboard() {
                     ))}
                   </div>
                   <div className="bg-[#FAF6EF] dark:bg-[#2C241D] rounded-xl p-3 border border-[#E9DFD1] dark:border-[#382E25] mb-4">
-                    <p className="text-[10px] text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-0.5 font-semibold">College</p>
+                    <p className="text-[10px] text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-0.5 font-semibold">College & Stream</p>
                     <p className="text-sm font-bold text-[#30291F] dark:text-[#F6EFE6] truncate">{profile.college}</p>
+                    {profile.branch && (
+                      <p className="text-xs font-semibold text-[#B85C38] dark:text-[#D9734E] truncate mt-0.5">{profile.branch}</p>
+                    )}
                   </div>
+
                   {profile.parsedSkills.length > 0 && (
                     <div>
                       <p className="text-[10px] text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-2 font-bold flex items-center gap-1"><Zap size={10} className="text-[#B85C38] dark:text-[#D9734E]" />Parsed Skills</p>

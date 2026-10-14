@@ -52,30 +52,37 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
     avatarUrl: null,
   });
 
+  const userRole = user?.role;
+  const userAvatarUrl = user?.avatarUrl;
+
   const fetchProfile = useCallback(async () => {
-    if (!user) return;
+    if (!userRole) return;
     
     setLoading(true);
     try {
-      if (user.role === 'STUDENT') {
+      if (userRole === 'STUDENT') {
         const { data } = await api.get<{ data: StudentProfile }>('/student/profile');
         setStudentForm(data.data);
-        if (data.data.avatarUrl) {
+        if (data.data.avatarUrl && data.data.avatarUrl !== userAvatarUrl) {
           updateUser({ avatarUrl: data.data.avatarUrl });
         }
-      } else if (user.role === 'RECRUITER') {
+      } else if (userRole === 'RECRUITER') {
         const { data } = await api.get<{ data: RecruiterProfile }>('/student/recruiter-profile');
         setRecruiterForm(data.data);
-        if (data.data.avatarUrl) {
+        if (data.data.avatarUrl && data.data.avatarUrl !== userAvatarUrl) {
           updateUser({ avatarUrl: data.data.avatarUrl });
         }
       }
-    } catch {
-      toast.error('Failed to load profile details.');
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status !== 404) {
+        console.error('Failed to load profile details:', err);
+        toast.error('Failed to load profile details.');
+      }
     } finally {
       setLoading(false);
     }
-  }, [user, updateUser]);
+  }, [userRole, userAvatarUrl, updateUser]);
 
   useEffect(() => {
     if (isOpen) {
@@ -88,7 +95,7 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [isOpen, fetchProfile]);
+  }, [isOpen]); // Only trigger when panel is toggled open, preventing infinite re-fetch loops
 
   const handleAvatarFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -124,6 +131,8 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
         setRecruiterForm((prev) => ({ ...prev, avatarUrl: newUrl }));
       }
       updateUser({ avatarUrl: newUrl });
+      // Notify parent pages (e.g. Dashboard) so avatars refresh instantly
+      window.dispatchEvent(new CustomEvent('profile:updated', { detail: { avatarUrl: newUrl } }));
       toast.success('Profile photo updated successfully!');
     } catch (err: unknown) {
       console.error('Avatar upload failed:', err);
@@ -148,6 +157,7 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
         await api.put('/student/recruiter-profile', recruiterForm);
         toast.success('Profile updated successfully!');
       }
+      window.dispatchEvent(new CustomEvent('profile:updated', { detail: studentForm }));
       onClose();
     } catch {
       toast.error('Failed to save profile details.');
@@ -155,6 +165,7 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
       setSaving(false);
     }
   };
+
 
   const getInitials = () => {
     if (user?.role === 'STUDENT') {
