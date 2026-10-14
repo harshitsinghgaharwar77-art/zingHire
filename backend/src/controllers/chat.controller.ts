@@ -359,8 +359,8 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
         title: `💬 New message from ${senderRole}`,
         message: content.trim().length > 60 ? `${content.trim().slice(0, 57)}...` : content.trim(),
         linkUrl: req.user.role === 'RECRUITER'
-          ? `/student/dashboard?conversationId=${conversationId}`
-          : `/recruiter/dashboard?conversationId=${conversationId}`,
+          ? `/student?conversationId=${conversationId}`
+          : `/recruiter?conversationId=${conversationId}`,
       },
     });
 

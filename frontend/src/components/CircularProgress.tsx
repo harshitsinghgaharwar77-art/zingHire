@@ -19,10 +19,15 @@ export default function CircularProgress({ score, size = 80, stroke = 8, classNa
   const circumference = 2 * Math.PI * radius;
   const filled      = (score / 100) * circumference;
 
-  const color =
-    score >= 80 ? '#059669'   // emerald-600
-    : score >= 60 ? '#d97706' // amber-600
-    : '#dc2626';              // red-600
+  const colorClass =
+    score >= 80 ? 'text-emerald-600 dark:text-emerald-400'
+    : score >= 60 ? 'text-amber-600 dark:text-amber-400'
+    : 'text-rose-600 dark:text-rose-400';
+
+  const strokeColor =
+    score >= 80 ? 'stroke-emerald-600 dark:stroke-emerald-400'
+    : score >= 60 ? 'stroke-amber-600 dark:stroke-amber-400'
+    : 'stroke-rose-600 dark:stroke-rose-400';
 
   return (
     <div className={cn('relative inline-flex items-center justify-center', className)}
@@ -33,13 +38,13 @@ export default function CircularProgress({ score, size = 80, stroke = 8, classNa
         viewBox={`0 0 ${size} ${size}`}
         style={{ transform: 'rotate(-90deg)' }}
       >
-        {/* Track — light grey for light-theme readability */}
+        {/* Track — adaptive light/dark */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#e2e8f0"
+          className="stroke-slate-200 dark:stroke-slate-800/90 transition-colors"
           strokeWidth={stroke}
         />
         {/* Fill */}
@@ -48,7 +53,7 @@ export default function CircularProgress({ score, size = 80, stroke = 8, classNa
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke={color}
+          className={cn('transition-all', strokeColor)}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -58,8 +63,7 @@ export default function CircularProgress({ score, size = 80, stroke = 8, classNa
       </svg>
       {/* Label */}
       <span
-        className="absolute text-xs font-bold"
-        style={{ color }}
+        className={cn('absolute text-xs font-bold transition-colors', colorClass)}
       >
         {score}%
       </span>

@@ -82,13 +82,7 @@ export default function RecruiterDashboard() {
   const [statusUpdatingId, setStatusUpdatingId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'SHORTLISTED' | 'REJECTED'>('ALL');
   const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    const qConvId = searchParams.get('conversationId');
-    if (qConvId) {
-      openChat(qConvId);
-    }
-  }, [searchParams, openChat]);
+  const [highlightedJobId, setHighlightedJobId] = useState<string | null>(null);
 
   // Post form state
   const [title,       setTitle]       = useState('');
@@ -134,8 +128,8 @@ export default function RecruiterDashboard() {
     };
   }, [fetchJobs]);
 
-  const fetchApplicantsForJob = useCallback(async (jobId: string) => {
-    if (applicantsByJob[jobId]) return; // already loaded
+  const fetchApplicantsForJob = useCallback(async (jobId: string, force = false) => {
+    if (!force && applicantsByJob[jobId]) return; // already loaded
     setLoadingApplicantsFor(jobId);
     try {
       const { data } = await api.get<{ data: RealApplicant[] }>(`/jobs/${jobId}/applicants`);
@@ -146,6 +140,74 @@ export default function RecruiterDashboard() {
       setLoadingApplicantsFor(null);
     }
   }, [applicantsByJob]);
+
+  // Open job details & applicants view (e.g. from notification clicks or query params)
+  const openJobApplicants = useCallback((targetJobId: string) => {
+    setActiveView('postings');
+    setExpandedJob(targetJobId);
+    setHighlightedJobId(targetJobId);
+    void fetchApplicantsForJob(targetJobId, true);
+
+    setTimeout(() => {
+      const el = document.getElementById(`job-posting-${targetJobId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 250);
+
+    setTimeout(() => {
+      setHighlightedJobId(prev => (prev === targetJobId ? null : prev));
+    }, 4000);
+  }, [fetchApplicantsForJob]);
+
+  // Handle URL query parameters (jobId, conversationId, view)
+  useEffect(() => {
+    const qConvId = searchParams.get('conversationId');
+    if (qConvId) {
+      openChat(qConvId);
+    }
+    const qJobId = searchParams.get('jobId');
+    if (qJobId) {
+      openJobApplicants(qJobId);
+    }
+    const qView = searchParams.get('view');
+    if (qView && ['dashboard', 'postings', 'applicants', 'analytics', 'post-job'].includes(qView)) {
+      setActiveView(qView as any);
+    }
+  }, [searchParams, openChat, openJobApplicants]);
+
+  // Handle intra-page notification click events
+  useEffect(() => {
+    const handleNotificationEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ linkUrl?: string }>;
+      const linkUrl = customEvent.detail?.linkUrl;
+      if (!linkUrl) return;
+
+      try {
+        const url = new URL(linkUrl, window.location.origin);
+        const jId = url.searchParams.get('jobId');
+        if (jId) {
+          openJobApplicants(jId);
+        }
+        const cId = url.searchParams.get('conversationId');
+        if (cId) {
+          openChat(cId);
+        }
+        const v = url.searchParams.get('view');
+        if (v && ['dashboard', 'postings', 'applicants', 'analytics', 'post-job'].includes(v)) {
+          setActiveView(v as any);
+        }
+      } catch {
+        const match = linkUrl.match(/jobId=([^&]+)/);
+        if (match?.[1]) {
+          openJobApplicants(match[1]);
+        }
+      }
+    };
+
+    window.addEventListener('zinghire:notification-click', handleNotificationEvent);
+    return () => window.removeEventListener('zinghire:notification-click', handleNotificationEvent);
+  }, [openJobApplicants, openChat]);
 
   const fetchAllApplicants = useCallback(async () => {
     if (allLoaded) return;
@@ -325,18 +387,18 @@ export default function RecruiterDashboard() {
         {/* Company avatar placeholder */}
         <div className="enterprise-card p-5 flex flex-col items-center text-center gap-3">
           <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600
-                          flex items-center justify-center shadow-md ring-4 ring-indigo-100">
+                          flex items-center justify-center shadow-md ring-4 ring-indigo-100 dark:ring-indigo-900/50">
             <Briefcase size={24} className="text-white" />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>Recruiter Portal</p>
+            <p className="text-sm font-bold text-slate-900 dark:text-white" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>Recruiter Portal</p>
             <p className="text-xs text-slate-400 mt-0.5">ZingHire Recruiter Engine</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold rounded-full">
+            <span className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 text-xs font-bold rounded-full">
               {activeJobs} Active
             </span>
-            <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200">
+            <span className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-full border border-slate-200 dark:border-slate-700">
               {totalApps} Apps
             </span>
           </div>
@@ -350,12 +412,12 @@ export default function RecruiterDashboard() {
               key={view}
               onClick={() => setActiveView(view)}
               className={cn('nav-item w-full text-left', activeView === view && 'active',
-                view === 'post-job' && activeView !== view && 'text-indigo-600 hover:bg-indigo-50')}
+                view === 'post-job' && activeView !== view && 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40')}
             >
               <span className={cn('nav-icon text-slate-400', view === 'post-job' && 'text-indigo-500')}>{icon}</span>
               <span className={view === 'post-job' ? 'font-semibold' : ''}>{label}</span>
               {badge !== undefined && badge > 0 && (
-                <span className="ml-auto text-[10px] font-bold bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full">
+                <span className="ml-auto text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/60 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.5 rounded-full">
                   {badge}
                 </span>
               )}
@@ -367,12 +429,12 @@ export default function RecruiterDashboard() {
         <div className="enterprise-card p-4 space-y-3">
           <p className="type-label">Quick Stats</p>
           {[
-            { label: 'Active Jobs',  value: activeJobs,  color: 'text-emerald-700' },
-            { label: 'Total Apps',   value: totalApps,   color: 'text-indigo-700'  },
-            { label: 'Avg Days Up',  value: avgDays,     color: 'text-slate-700'   },
+            { label: 'Active Jobs',  value: activeJobs,  color: 'text-emerald-700 dark:text-emerald-400' },
+            { label: 'Total Apps',   value: totalApps,   color: 'text-indigo-700 dark:text-indigo-400'  },
+            { label: 'Avg Days Up',  value: avgDays,     color: 'text-slate-700 dark:text-slate-300'   },
           ].map(({ label, value, color }) => (
             <div key={label} className="flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-medium">{label}</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{label}</span>
               <span className={cn('text-sm font-black', color)}>{value}</span>
             </div>
           ))}
@@ -390,18 +452,18 @@ export default function RecruiterDashboard() {
             <div className="section-header">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                  <h1 className="text-2xl font-black text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>
+                  <h1 className="text-2xl font-black text-slate-900 dark:text-white" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>
                     Recruiter Dashboard
                   </h1>
-                  <p className="text-slate-500 mt-0.5 text-sm">Manage job postings and review AI-scored applicants</p>
+                  <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-sm">Manage job postings and review AI-scored applicants</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => openChat(null)}
-                    className="flex items-center gap-1.5 px-3 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl shadow-sm transition-all"
+                    className="flex items-center gap-1.5 px-3 py-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/90 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl shadow-sm transition-all"
                   >
-                    <MessageSquare size={14} className="text-indigo-600" />
+                    <MessageSquare size={14} className="text-indigo-600 dark:text-indigo-400" />
                     <span>Live Chat</span>
                   </button>
                   <NotificationBell onOpenChat={(convId) => openChat(convId ?? null)} />
@@ -411,7 +473,7 @@ export default function RecruiterDashboard() {
                     <PlusCircle size={14} />Post a Job
                   </button>
                   <button onClick={() => void fetchJobs()} disabled={loadingJobs}
-                    className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+                    className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors">
                     <RefreshCw size={15} className={loadingJobs ? 'animate-spin' : ''} />
                   </button>
                 </div>
@@ -423,17 +485,17 @@ export default function RecruiterDashboard() {
               {loadingJobs ? Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="stat-card"><div className="skeleton h-3.5 w-20 mb-4" /><div className="skeleton h-10 w-16 mb-1" /><div className="skeleton h-3 w-28" /></div>
               )) : [
-                { label: 'Active Postings',     value: activeJobs, sub: `${jobs.length - activeJobs} inactive`,       icon: <Briefcase size={18} className="text-indigo-600" />, bg: 'bg-indigo-50' },
-                { label: 'Total Applications',  value: totalApps,  sub: 'across all postings',                         icon: <Users size={18} className="text-emerald-600" />,  bg: 'bg-emerald-50' },
-                { label: 'Avg. Days Posted',    value: avgDays,    sub: 'avg time on market',                          icon: <Clock size={18} className="text-violet-600" />,   bg: 'bg-violet-50' },
+                { label: 'Active Postings',     value: activeJobs, sub: `${jobs.length - activeJobs} inactive`,       icon: <Briefcase size={18} className="text-indigo-600 dark:text-indigo-400" />, bg: 'bg-indigo-50 dark:bg-indigo-950/60' },
+                { label: 'Total Applications',  value: totalApps,  sub: 'across all postings',                         icon: <Users size={18} className="text-emerald-600 dark:text-emerald-400" />,  bg: 'bg-emerald-50 dark:bg-emerald-950/60' },
+                { label: 'Avg. Days Posted',    value: avgDays,    sub: 'avg time on market',                          icon: <Clock size={18} className="text-violet-600 dark:text-violet-400" />,   bg: 'bg-violet-50 dark:bg-violet-950/60' },
               ].map(({ label, value, sub, icon, bg }, i) => (
                 <div key={label} className={cn('stat-card animate-view-enter', `stagger-${i + 1}`)}>
                   <div className="flex items-center justify-between mb-3">
                     <span className="type-label">{label}</span>
                     <div className={cn('p-2 rounded-lg', bg)}>{icon}</div>
                   </div>
-                  <p className="text-4xl font-black text-slate-900 mb-0.5 animate-count" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.05em' }}>{value}</p>
-                  <p className="text-xs text-slate-400 font-medium">{sub}</p>
+                  <p className="text-4xl font-black text-slate-900 dark:text-white mb-0.5 animate-count" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.05em' }}>{value}</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-400 font-medium">{sub}</p>
                 </div>
               ))}
             </div>
@@ -441,41 +503,41 @@ export default function RecruiterDashboard() {
             {/* Recent postings preview */}
             <div className="enterprise-card p-6 animate-view-enter stagger-3">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  <Briefcase size={15} className="text-indigo-500" />Recent Postings
+                <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                  <Briefcase size={15} className="text-indigo-500 dark:text-indigo-400" />Recent Postings
                 </h2>
-                <button onClick={() => setActiveView('postings')} className="text-xs text-indigo-600 font-semibold hover:underline">View All →</button>
+                <button onClick={() => setActiveView('postings')} className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">View All →</button>
               </div>
               {loadingJobs ? <div className="space-y-3">{Array.from({ length: 2 }).map((_, i) => <div key={i} className="skeleton h-20 rounded-xl" />)}</div>
               : jobs.length === 0 ? (
                 <div className="text-center py-10">
-                  <Briefcase size={28} className="text-slate-300 mx-auto mb-3" />
-                  <p className="font-semibold text-slate-600">No jobs posted yet</p>
-                  <button onClick={() => setActiveView('post-job')} className="mt-3 text-sm text-indigo-600 font-semibold hover:underline">Post your first job →</button>
+                  <Briefcase size={28} className="text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                  <p className="font-semibold text-slate-600 dark:text-slate-300">No jobs posted yet</p>
+                  <button onClick={() => setActiveView('post-job')} className="mt-3 text-sm text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">Post your first job →</button>
                 </div>
               ) : jobs.slice(0, 3).map(job => (
-                <div key={job.id} className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
+                <div key={job.id} className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800 last:border-0">
                   <div>
-                    <p className="font-bold text-slate-900 text-sm">{job.title}</p>
+                    <p className="font-bold text-slate-900 dark:text-white text-sm">{job.title}</p>
                     <p className="text-xs text-slate-400 mt-0.5">{new Date(job.createdAt).toLocaleDateString()} · {job._count?.applications ?? 0} applicants</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold border', job.isActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200')}>
+                    <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold border', job.isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700')}>
                       {job.isActive ? '● Active' : '● Closed'}
                     </span>
-                    <button onClick={() => setActiveView('postings')} className="text-xs text-indigo-600 font-semibold hover:underline">Manage →</button>
+                    <button onClick={() => setActiveView('postings')} className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">Manage →</button>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Tips card */}
-            <div className="enterprise-card p-5 border-indigo-100 bg-indigo-50/50 animate-view-enter stagger-4">
+            <div className="enterprise-card p-5 border-indigo-100 dark:border-indigo-900/40 bg-indigo-50/50 dark:bg-indigo-950/20 animate-view-enter stagger-4">
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-indigo-100 rounded-xl flex-shrink-0"><Sparkles size={16} className="text-indigo-600" /></div>
+                <div className="p-2 bg-indigo-100 dark:bg-indigo-900/50 rounded-xl flex-shrink-0"><Sparkles size={16} className="text-indigo-600 dark:text-indigo-400" /></div>
                 <div>
-                  <p className="font-bold text-indigo-900 text-sm">Pro Tips</p>
-                  <ul className="mt-2 space-y-1 text-xs text-indigo-800">
+                  <p className="font-bold text-indigo-900 dark:text-indigo-200 text-sm">Pro Tips</p>
+                  <ul className="mt-2 space-y-1 text-xs text-indigo-800 dark:text-indigo-300">
                     <li>• Write detailed JDs — the AI extracts more accurate skills</li>
                     <li>• Candidates are ranked by skill match + CGPA + experience</li>
                     <li>• Use <strong>Analytics</strong> to see which skills are most in-demand</li>
@@ -492,8 +554,8 @@ export default function RecruiterDashboard() {
             <div className="section-header">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-2xl font-black text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>My Postings</h1>
-                  <p className="text-slate-500 mt-0.5 text-sm">{jobs.length} total · {activeJobs} active</p>
+                  <h1 className="text-2xl font-black text-slate-900 dark:text-white" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>My Postings</h1>
+                  <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-sm">{jobs.length} total · {activeJobs} active</p>
                 </div>
                 <div className="flex gap-2">
                   <button onClick={() => setActiveView('post-job')}
@@ -501,7 +563,7 @@ export default function RecruiterDashboard() {
                     <PlusCircle size={14} />New Job
                   </button>
                   <button onClick={() => void fetchJobs()} disabled={loadingJobs}
-                    className="p-2 rounded-xl border border-slate-200 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+                    className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors">
                     <RefreshCw size={15} className={loadingJobs ? 'animate-spin' : ''} />
                   </button>
                 </div>
@@ -512,8 +574,8 @@ export default function RecruiterDashboard() {
               <div className="space-y-4">{Array.from({ length: 3 }).map((_, i) => <div key={i} className="skeleton h-28 rounded-xl" />)}</div>
             ) : jobs.length === 0 ? (
               <div className="enterprise-card p-14 text-center">
-                <Briefcase size={36} className="text-slate-300 mx-auto mb-4" />
-                <p className="font-bold text-slate-700 text-base">No postings yet</p>
+                <Briefcase size={36} className="text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+                <p className="font-bold text-slate-700 dark:text-slate-200 text-base">No postings yet</p>
                 <p className="text-slate-400 text-sm mt-1">Post your first job to start receiving AI-ranked applicants</p>
                 <button onClick={() => setActiveView('post-job')} className="btn-primary mt-5">Post a Job</button>
               </div>
@@ -523,33 +585,41 @@ export default function RecruiterDashboard() {
                   const isExpanded = expandedJob === job.id;
                   const jobApplicants = applicantsByJob[job.id] ?? [];
                   return (
-                    <div key={job.id} className={cn('enterprise-card overflow-hidden animate-view-enter', `stagger-${Math.min(idx + 1, 6)}`)}>
+                    <div
+                      key={job.id}
+                      id={`job-posting-${job.id}`}
+                      className={cn(
+                        'enterprise-card overflow-hidden animate-view-enter transition-all duration-300',
+                        `stagger-${Math.min(idx + 1, 6)}`,
+                        highlightedJobId === job.id && 'ring-2 ring-indigo-500 shadow-xl shadow-indigo-500/20'
+                      )}
+                    >
                       <div className="p-5">
                         <div className="flex items-start justify-between gap-4 mb-3">
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-slate-900 text-base truncate" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>{job.title}</h3>
+                            <h3 className="font-bold text-slate-900 dark:text-white text-base truncate" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>{job.title}</h3>
                             <p className="text-xs text-slate-400 mt-0.5">Posted {new Date(job.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                           </div>
                           <span className={cn('flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-bold border',
-                            job.isActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200')}>
+                            job.isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700')}>
                             {job.isActive ? '● Active' : '● Closed'}
                           </span>
                         </div>
                         <div className="flex flex-wrap gap-1.5 mb-3">
                           {job.requiredSkills.slice(0, 5).map(s => (
-                            <span key={s} className="px-2 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[11px] font-semibold rounded-md">{s}</span>
+                            <span key={s} className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 text-[11px] font-semibold rounded-md">{s}</span>
                           ))}
                           {job.requiredSkills.length > 5 && <span className="text-slate-400 text-xs font-medium self-center">+{job.requiredSkills.length - 5} more</span>}
                         </div>
-                        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-3 border-t border-slate-100">
-                          <span>CGPA ≥ <span className="font-bold text-slate-800">{job.minCgpa}</span></span>
-                          <span>Exp ≥ <span className="font-bold text-slate-800">{job.minExperience} yrs</span></span>
-                          <span className="font-semibold text-emerald-700">{job._count?.applications ?? 0} Applicant{(job._count?.applications ?? 0) !== 1 ? 's' : ''}</span>
+                        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800">
+                          <span>CGPA ≥ <span className="font-bold text-slate-800 dark:text-slate-200">{job.minCgpa}</span></span>
+                          <span>Exp ≥ <span className="font-bold text-slate-800 dark:text-slate-200">{job.minExperience} yrs</span></span>
+                          <span className="font-semibold text-emerald-700 dark:text-emerald-400">{job._count?.applications ?? 0} Applicant{(job._count?.applications ?? 0) !== 1 ? 's' : ''}</span>
                           <div className="ml-auto flex items-center gap-3">
-                            <button onClick={() => setJdPreviewJob(job)} className="flex items-center gap-1 text-slate-500 font-semibold hover:text-indigo-600 transition-colors">
+                            <button onClick={() => setJdPreviewJob(job)} className="flex items-center gap-1 text-slate-500 dark:text-slate-400 font-semibold hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                               <BookOpen size={13} />View JD
                             </button>
-                            <button onClick={() => void handleDeleteJob(job.id)} className="flex items-center gap-1 text-red-400 font-semibold hover:text-red-700 transition-colors">
+                            <button onClick={() => void handleDeleteJob(job.id)} className="flex items-center gap-1 text-red-400 font-semibold hover:text-red-700 dark:hover:text-red-400 transition-colors">
                               <Trash2 size={13} />Delete
                             </button>
                             <button
@@ -558,7 +628,7 @@ export default function RecruiterDashboard() {
                                 setExpandedJob(job.id);
                                 await fetchApplicantsForJob(job.id);
                               }}
-                              className="flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors">
+                              className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-semibold hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
                               <Users size={13} />
                               {isExpanded ? 'Hide' : 'Applicants'}
                             </button>
@@ -568,15 +638,15 @@ export default function RecruiterDashboard() {
 
                       {/* Applicant panel */}
                       {isExpanded && (
-                        <div className="bg-slate-50 border-t border-slate-200 p-5 animate-slide-up">
+                        <div className="bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 p-5 animate-slide-up">
                           <h4 className="type-label mb-4 flex items-center gap-2">
-                            <Search size={12} className="text-indigo-500" />AI Ranked Applicants
-                            {!loadingApplicantsFor && <span className="ml-auto text-indigo-600 font-bold normal-case text-sm">{jobApplicants.length}</span>}
+                            <Search size={12} className="text-indigo-500 dark:text-indigo-400" />AI Ranked Applicants
+                            {!loadingApplicantsFor && <span className="ml-auto text-indigo-600 dark:text-indigo-400 font-bold normal-case text-sm">{jobApplicants.length}</span>}
                           </h4>
                           {loadingApplicantsFor === job.id ? (
                             <div className="flex items-center justify-center py-8 gap-3 text-slate-400"><Loader2 size={18} className="animate-spin text-indigo-500" /><span className="text-sm">Loading…</span></div>
                           ) : jobApplicants.length === 0 ? (
-                            <div className="text-center py-8"><Users size={22} className="text-slate-300 mx-auto mb-2" /><p className="text-sm text-slate-400">No applications yet</p></div>
+                            <div className="text-center py-8"><Users size={22} className="text-slate-300 dark:text-slate-600 mx-auto mb-2" /><p className="text-sm text-slate-400">No applications yet</p></div>
                           ) : (
                             <div className="space-y-3">
                               {jobApplicants.map(a => (
@@ -610,11 +680,11 @@ export default function RecruiterDashboard() {
             <div className="section-header">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                  <h1 className="text-2xl font-black text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>All Applicants</h1>
-                  <p className="text-slate-500 mt-0.5 text-sm">Every candidate who has applied to your postings, AI-ranked</p>
+                  <h1 className="text-2xl font-black text-slate-900 dark:text-white" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>All Applicants</h1>
+                  <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-sm">Every candidate who has applied to your postings, AI-ranked</p>
                 </div>
                 <button onClick={() => { setAllLoaded(false); void fetchAllApplicants(); }} disabled={loadingAll}
-                  className="p-2 rounded-xl border border-slate-200 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+                  className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors">
                   <RefreshCw size={15} className={loadingAll ? 'animate-spin' : ''} />
                 </button>
               </div>
@@ -624,13 +694,13 @@ export default function RecruiterDashboard() {
             {!loadingAll && allLoaded && (
               <div className="grid grid-cols-3 gap-4 animate-view-enter">
                 {[
-                  { label: 'Total Applicants', value: allApplicants.length, icon: <Users size={16} className="text-indigo-600" />, bg: 'bg-indigo-50' },
-                  { label: 'Avg Match Score',  value: `${analytics.avgScore}%`, icon: <Target size={16} className="text-emerald-600" />, bg: 'bg-emerald-50' },
-                  { label: 'Pending Review',   value: analytics.statusBreakdown['PENDING'] ?? 0, icon: <AlertCircle size={16} className="text-amber-600" />, bg: 'bg-amber-50' },
+                  { label: 'Total Applicants', value: allApplicants.length, icon: <Users size={16} className="text-indigo-600 dark:text-indigo-400" />, bg: 'bg-indigo-50 dark:bg-indigo-950/60' },
+                  { label: 'Avg Match Score',  value: `${analytics.avgScore}%`, icon: <Target size={16} className="text-emerald-600 dark:text-emerald-400" />, bg: 'bg-emerald-50 dark:bg-emerald-950/60' },
+                  { label: 'Pending Review',   value: analytics.statusBreakdown['PENDING'] ?? 0, icon: <AlertCircle size={16} className="text-amber-600 dark:text-amber-400" />, bg: 'bg-amber-50 dark:bg-amber-950/60' },
                 ].map(({ label, value, icon, bg }) => (
                   <div key={label} className="stat-card">
                     <div className="flex items-center justify-between mb-2"><span className="type-label">{label}</span><div className={cn('p-2 rounded-lg', bg)}>{icon}</div></div>
-                    <p className="text-2xl font-black text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>{value}</p>
+                    <p className="text-2xl font-black text-slate-900 dark:text-white" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>{value}</p>
                   </div>
                 ))}
               </div>
@@ -642,11 +712,11 @@ export default function RecruiterDashboard() {
                 <div className="relative flex-1">
                   <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input type="text" placeholder="Search by name, college, skill, or email…" value={applicantsSearch} onChange={e => setApplicantsSearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400
+                    className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500
                                focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15 transition-all" />
                 </div>
                 {/* Status Filter Pills */}
-                <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200 overflow-x-auto no-scrollbar">
+                <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 overflow-x-auto no-scrollbar">
                   {[
                     { key: 'ALL', label: `All (${allApplicants.length})` },
                     { key: 'PENDING', label: `Pending (${analytics.statusBreakdown['PENDING'] ?? 0})` },
@@ -658,10 +728,10 @@ export default function RecruiterDashboard() {
                       type="button"
                       onClick={() => setStatusFilter(key as typeof statusFilter)}
                       className={cn(
-                        'px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 whitespace-nowrap',
+                        'px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 whitespace-nowrap cursor-pointer',
                         statusFilter === key
-                          ? 'bg-white text-indigo-700 shadow-sm border border-indigo-100'
-                          : 'text-slate-500 hover:text-slate-800',
+                          ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-cyan-400 shadow-sm border border-indigo-100 dark:border-slate-600'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200',
                       )}
                     >
                       {label}
@@ -720,29 +790,29 @@ export default function RecruiterDashboard() {
         {activeView === 'analytics' && (
           <div className="space-y-5 animate-view-enter">
             <div className="section-header">
-              <h1 className="text-2xl font-black text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>Analytics</h1>
-              <p className="text-slate-500 mt-0.5 text-sm">Aggregated insights from your postings</p>
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>Analytics</h1>
+              <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-sm">Aggregated insights from your postings</p>
             </div>
 
             {/* Overview stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-view-enter">
               {[
-                { label: 'Total Jobs',    value: jobs.length,  icon: <Briefcase size={16} className="text-indigo-600" />,  bg: 'bg-indigo-50' },
-                { label: 'Active Jobs',   value: activeJobs,   icon: <CheckCircle size={16} className="text-emerald-600" />, bg: 'bg-emerald-50' },
-                { label: 'Total Apps',    value: totalApps,    icon: <Users size={16} className="text-violet-600" />,       bg: 'bg-violet-50' },
-                { label: 'Avg Days Up',   value: avgDays,      icon: <Clock size={16} className="text-amber-600" />,        bg: 'bg-amber-50' },
+                { label: 'Total Jobs',    value: jobs.length,  icon: <Briefcase size={16} className="text-indigo-600 dark:text-indigo-400" />,  bg: 'bg-indigo-50 dark:bg-indigo-950/60' },
+                { label: 'Active Jobs',   value: activeJobs,   icon: <CheckCircle size={16} className="text-emerald-600 dark:text-emerald-400" />, bg: 'bg-emerald-50 dark:bg-emerald-950/60' },
+                { label: 'Total Apps',    value: totalApps,    icon: <Users size={16} className="text-violet-600 dark:text-violet-400" />,       bg: 'bg-violet-50 dark:bg-violet-950/60' },
+                { label: 'Avg Days Up',   value: avgDays,      icon: <Clock size={16} className="text-amber-600 dark:text-amber-400" />,        bg: 'bg-amber-50 dark:bg-amber-950/60' },
               ].map(({ label, value, icon, bg }, i) => (
                 <div key={label} className={cn('stat-card animate-view-enter', `stagger-${i + 1}`)}>
                   <div className="flex items-center justify-between mb-2"><span className="type-label">{label}</span><div className={cn('p-2 rounded-lg', bg)}>{icon}</div></div>
-                  <p className="text-3xl font-black text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.04em' }}>{value}</p>
+                  <p className="text-3xl font-black text-slate-900 dark:text-white" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.04em' }}>{value}</p>
                 </div>
               ))}
             </div>
 
             {/* Top required skills */}
             <div className="enterprise-card p-6 animate-view-enter stagger-2">
-              <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-5">
-                <Zap size={15} className="text-indigo-500" />Top Required Skills
+              <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2 mb-5">
+                <Zap size={15} className="text-indigo-500 dark:text-indigo-400" />Top Required Skills
                 <span className="type-label ml-1">across all postings</span>
               </h2>
               {analytics.topSkills.length === 0 ? (
@@ -756,14 +826,14 @@ export default function RecruiterDashboard() {
                         <div className="flex justify-between items-center mb-1">
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-black text-slate-400 w-4">#{i + 1}</span>
-                            <span className="text-sm font-semibold text-slate-700 capitalize">{skill}</span>
+                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 capitalize">{skill}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-slate-400">{count}/{jobs.length} jobs</span>
-                            <span className="text-sm font-black text-indigo-600">{pct}%</span>
+                            <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">{pct}%</span>
                           </div>
                         </div>
-                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                           <div className="h-full rounded-full skill-bar-fill bg-gradient-to-r from-indigo-500 to-violet-500" style={{ width: `${pct}%` }} />
                         </div>
                       </div>
@@ -776,13 +846,13 @@ export default function RecruiterDashboard() {
             {/* Jobs performance table */}
             {jobs.length > 0 && (
               <div className="enterprise-card p-6 animate-view-enter stagger-3">
-                <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-4">
-                  <TrendingUp size={15} className="text-indigo-500" />Job Performance
+                <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2 mb-4">
+                  <TrendingUp size={15} className="text-indigo-500 dark:text-indigo-400" />Job Performance
                 </h2>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-slate-100">
+                      <tr className="border-b border-slate-100 dark:border-slate-800">
                         {['Job Title', 'Posted', 'Applicants', 'Skills', 'Status'].map(h => (
                           <th key={h} className="type-label pb-3 text-left pr-4 last:pr-0">{h}</th>
                         ))}
@@ -790,14 +860,14 @@ export default function RecruiterDashboard() {
                     </thead>
                     <tbody>
                       {jobs.map(job => (
-                        <tr key={job.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                          <td className="py-3 pr-4 font-semibold text-slate-900 max-w-[160px] truncate">{job.title}</td>
-                          <td className="py-3 pr-4 text-slate-500 text-xs">{new Date(job.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</td>
-                          <td className="py-3 pr-4 font-bold text-indigo-600">{job._count?.applications ?? 0}</td>
-                          <td className="py-3 pr-4 text-slate-500 text-xs">{job.requiredSkills.length} skills</td>
+                        <tr key={job.id} className="border-b border-slate-50 dark:border-slate-800/60 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
+                          <td className="py-3 pr-4 font-semibold text-slate-900 dark:text-white max-w-[160px] truncate">{job.title}</td>
+                          <td className="py-3 pr-4 text-slate-500 dark:text-slate-400 text-xs">{new Date(job.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</td>
+                          <td className="py-3 pr-4 font-bold text-indigo-600 dark:text-indigo-400">{job._count?.applications ?? 0}</td>
+                          <td className="py-3 pr-4 text-slate-500 dark:text-slate-400 text-xs">{job.requiredSkills.length} skills</td>
                           <td className="py-3">
                             <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold border',
-                              job.isActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200')}>
+                              job.isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700')}>
                               {job.isActive ? 'Active' : 'Closed'}
                             </span>
                           </td>
@@ -812,16 +882,16 @@ export default function RecruiterDashboard() {
             {/* Applicant status breakdown */}
             {Object.keys(analytics.statusBreakdown).length > 0 && (
               <div className="enterprise-card p-6 animate-view-enter stagger-4">
-                <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2 mb-4">
-                  <Award size={15} className="text-indigo-500" />Applicant Status Breakdown
+                <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2 mb-4">
+                  <Award size={15} className="text-indigo-500 dark:text-indigo-400" />Applicant Status Breakdown
                 </h2>
                 <div className="flex flex-wrap gap-3">
                   {Object.entries(analytics.statusBreakdown).map(([status, count]) => (
                     <div key={status} className={cn('px-4 py-3 rounded-xl border text-center min-w-[100px]',
-                      status === 'PENDING'     ? 'bg-amber-50 border-amber-200'  :
-                      status === 'SHORTLISTED' ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-100 border-slate-200')}>
-                      <p className={cn('text-2xl font-black', status === 'PENDING' ? 'text-amber-700' : status === 'SHORTLISTED' ? 'text-emerald-700' : 'text-slate-700')} style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>{count}</p>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mt-1">{status}</p>
+                      status === 'PENDING'     ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60'  :
+                      status === 'SHORTLISTED' ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/60' : 'bg-slate-100 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700')}>
+                      <p className={cn('text-2xl font-black', status === 'PENDING' ? 'text-amber-700 dark:text-amber-400' : status === 'SHORTLISTED' ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300')} style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>{count}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1">{status}</p>
                     </div>
                   ))}
                 </div>
@@ -834,9 +904,9 @@ export default function RecruiterDashboard() {
         {activeView === 'post-job' && (
           <div className="space-y-5 animate-view-enter">
             <div className="section-header">
-              <h1 className="text-2xl font-black text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>Post a New Job</h1>
-              <p className="text-slate-500 mt-0.5 text-sm flex items-center gap-1.5">
-                <Sparkles size={13} className="text-indigo-500" />AI will automatically extract required skills from your description
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>Post a New Job</h1>
+              <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-sm flex items-center gap-1.5">
+                <Sparkles size={13} className="text-indigo-500 dark:text-indigo-400" />AI will automatically extract required skills from your description
               </p>
             </div>
 
@@ -847,7 +917,7 @@ export default function RecruiterDashboard() {
                   <label className="type-label block mb-2">Job Title *</label>
                   <input type="text" value={title} onChange={e => setTitle(e.target.value)} required
                     placeholder="e.g. Full Stack Developer Intern"
-                    className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500
                                focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                 </div>
 
@@ -857,7 +927,7 @@ export default function RecruiterDashboard() {
                   <div className="relative">
                     <textarea value={description} onChange={e => setDescription(e.target.value)} required rows={8}
                       placeholder={`Describe the role and requirements.\n\nExample:\nWe are looking for a React/Node.js developer...\n\nRequired Skills: React, TypeScript, MongoDB, REST APIs\nMin CGPA: 7.5\nExperience: 1+ year`}
-                      className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 resize-y
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 resize-y
                                  focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                     {description.length > 0 && (
                       <span className="absolute bottom-3 right-3 text-[10px] text-slate-400 font-medium">{description.length} chars</span>
@@ -874,22 +944,22 @@ export default function RecruiterDashboard() {
                     <label className="type-label block mb-2">Min CGPA <span className="normal-case font-normal text-slate-400">(optional)</span></label>
                     <input type="number" value={minCgpa} onChange={e => setMinCgpa(e.target.value)} step="0.1" min="0" max="10"
                       placeholder="e.g. 7.0 — or leave blank for AI"
-                      className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500
                                  focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                   </div>
                   <div>
                     <label className="type-label block mb-2">Min Experience <span className="normal-case font-normal text-slate-400">(years, optional)</span></label>
                     <input type="number" value={minExp} onChange={e => setMinExp(e.target.value)} step="0.5" min="0"
                       placeholder="e.g. 1 — or leave blank"
-                      className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500
                                  focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all" />
                   </div>
                 </div>
 
                 {/* Info box */}
-                <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-start gap-3">
-                  <Sparkles size={14} className="text-indigo-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-indigo-700 leading-relaxed">
+                <div className="bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-800/60 rounded-xl p-4 flex items-start gap-3">
+                  <Sparkles size={14} className="text-indigo-600 dark:text-indigo-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-indigo-700 dark:text-indigo-300 leading-relaxed">
                     <strong>AI Skill Extraction:</strong> Our Gemini-powered engine reads your description and pulls out exact technical skills, frameworks, and tools. Students will be ranked by how well their parsed resume matches these skills.
                   </p>
                 </div>
@@ -898,13 +968,13 @@ export default function RecruiterDashboard() {
                 <div className="flex items-center gap-3 pt-2">
                   <button type="submit" disabled={submitting}
                     className="flex items-center gap-2 px-7 py-3 bg-indigo-600 text-white font-bold rounded-xl
-                               hover:bg-indigo-700 active:scale-[0.97] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                               hover:bg-indigo-700 active:scale-[0.97] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>
                     {submitting ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
                     {submitting ? 'Posting & Parsing…' : 'Post Job with AI'}
                   </button>
                   <button type="button" onClick={() => setActiveView('dashboard')}
-                    className="px-5 py-3 rounded-xl border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 text-sm font-semibold transition-colors">
+                    className="px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-semibold transition-colors cursor-pointer">
                     Cancel
                   </button>
                 </div>
@@ -947,33 +1017,33 @@ function ApplicantRow({
   const isUpdatingStatus = statusLoadingId === applicant.id;
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4
-                    hover:border-indigo-200 hover:shadow-card transition-all duration-200">
+    <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4
+                    hover:border-indigo-200 dark:hover:border-indigo-800/80 hover:shadow-card transition-all duration-200">
       <div className="flex items-center gap-4">
         <div className="flex-shrink-0"><CircularProgress score={score} size={52} stroke={5} /></div>
         <div>
           <div className="flex items-center gap-2">
-            <p className="font-bold text-slate-900 text-sm" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>{name}</p>
+            <p className="font-bold text-slate-900 dark:text-white text-sm" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>{name}</p>
             <span className={cn('inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide',
-              applicant.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border border-amber-200'
-              : applicant.status === 'SHORTLISTED' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-              : 'bg-red-50 text-red-700 border border-red-200')}>
+              applicant.status === 'PENDING' ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
+              : applicant.status === 'SHORTLISTED' ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+              : 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800')}>
               {applicant.status}
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">{applicant.student.college} · <span className="font-semibold">{applicant.student.cgpa}</span> CGPA</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{applicant.student.college} · <span className="font-semibold text-slate-700 dark:text-slate-300">{applicant.student.cgpa}</span> CGPA</p>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
         {/* Shortlist & Reject Actions */}
         {onStatusChange && (
-          <div className="flex items-center gap-1.5 mr-1 border-r border-slate-200 pr-2">
+          <div className="flex items-center gap-1.5 mr-1 border-r border-slate-200 dark:border-slate-800 pr-2">
             {applicant.status !== 'SHORTLISTED' && (
               <button
                 disabled={isUpdatingStatus}
                 onClick={() => void onStatusChange(applicant.id, 'SHORTLISTED')}
-                className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm shadow-emerald-600/20 transition-all flex items-center gap-1 disabled:opacity-50"
+                className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm shadow-emerald-600/20 transition-all flex items-center gap-1 disabled:opacity-50 cursor-pointer"
                 title="Shortlist applicant & unlock live chat"
               >
                 {isUpdatingStatus ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle2 size={12} />}
@@ -984,7 +1054,7 @@ function ApplicantRow({
             {applicant.status === 'SHORTLISTED' && onOpenChat && (
               <button
                 onClick={() => onOpenChat(applicant.conversationId ?? undefined)}
-                className="px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold rounded-lg shadow-md shadow-indigo-600/30 transition-all flex items-center gap-1.5 animate-pulse"
+                className="px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold rounded-lg shadow-md shadow-indigo-600/30 transition-all flex items-center gap-1.5 animate-pulse cursor-pointer"
                 title="Direct 1-on-1 Live Chat"
               >
                 <MessageSquare size={13} />
@@ -996,7 +1066,7 @@ function ApplicantRow({
               <button
                 disabled={isUpdatingStatus}
                 onClick={() => void onStatusChange(applicant.id, 'REJECTED')}
-                className="px-2 py-1.5 bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 text-xs font-semibold rounded-lg border border-slate-200 hover:border-rose-200 transition-colors disabled:opacity-50"
+                className="px-2 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:hover:border-rose-800 transition-colors disabled:opacity-50 cursor-pointer"
                 title="Reject candidate"
               >
                 <X size={12} />
@@ -1010,23 +1080,23 @@ function ApplicantRow({
           <>
             <button disabled={viewingId === applicant.id}
               onClick={() => void onView(applicant.student.resumeUrl!, applicant.id)}
-              className="px-2.5 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 border border-indigo-100 disabled:opacity-50">
+              className="px-2.5 py-1.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 border border-indigo-100 dark:border-indigo-800/60 disabled:opacity-50 cursor-pointer">
               {viewingId === applicant.id ? <Loader2 size={11} className="animate-spin" /> : <FileText size={11} />}
               {viewingId === applicant.id ? '…' : 'View'}
               {viewingId !== applicant.id && <ExternalLink size={9} />}
             </button>
             <button disabled={downloadingId === applicant.id}
               onClick={() => void onDownload(applicant.student.resumeUrl!, name, applicant.id)}
-              className="px-2.5 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 border border-emerald-100 disabled:opacity-50">
+              className="px-2.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 border border-emerald-100 dark:border-emerald-800/60 disabled:opacity-50 cursor-pointer">
               {downloadingId === applicant.id ? <Loader2 size={11} className="animate-spin" /> : <Download size={11} />}
               {downloadingId === applicant.id ? '…' : 'PDF'}
             </button>
           </>
         ) : (
-          <span className="px-2.5 py-1.5 bg-slate-100 text-slate-400 text-xs rounded-lg border border-slate-200">No Resume</span>
+          <span className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-400 text-xs rounded-lg border border-slate-200 dark:border-slate-700">No Resume</span>
         )}
         <a href={`mailto:${applicant.student.user.email}`}
-          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+          className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-indigo-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
           title={applicant.student.user.email}>
           <Mail size={15} />
         </a>
@@ -1047,32 +1117,32 @@ function RecruiterJDModal({ job, onClose }: { job: Job; onClose: () => void }) {
 
   return (
     <div onClick={e => { if (e.target === e.currentTarget) onClose(); }}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="relative bg-white w-full sm:max-w-2xl max-h-[90vh] rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col animate-slide-up overflow-hidden">
-        <div className="flex items-start justify-between gap-4 p-6 border-b border-slate-200 flex-shrink-0">
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+      <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full sm:max-w-2xl max-h-[90vh] rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col animate-slide-up overflow-hidden">
+        <div className="flex items-start justify-between gap-4 p-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
           <div>
-            <h2 className="text-lg font-black text-slate-900" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>{job.title}</h2>
+            <h2 className="text-lg font-black text-slate-900 dark:text-white" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>{job.title}</h2>
             <p className="text-xs text-slate-400 mt-0.5">Posted {new Date(job.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"><X size={18} /></button>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"><X size={18} /></button>
         </div>
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           <div className="flex flex-wrap gap-2">
-            <span className="bg-slate-100 border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700">Min CGPA: <span className="text-indigo-700 font-black ml-0.5">{job.minCgpa}</span></span>
-            <span className="bg-slate-100 border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700">Min Experience: <span className="text-indigo-700 font-black ml-0.5">{job.minExperience} yrs</span></span>
-            <span className={cn('px-3 py-1.5 rounded-lg text-xs font-bold border', job.isActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200')}>{job.isActive ? '● Active' : '● Closed'}</span>
+            <span className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">Min CGPA: <span className="text-indigo-700 dark:text-indigo-400 font-black ml-0.5">{job.minCgpa}</span></span>
+            <span className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">Min Experience: <span className="text-indigo-700 dark:text-indigo-400 font-black ml-0.5">{job.minExperience} yrs</span></span>
+            <span className={cn('px-3 py-1.5 rounded-lg text-xs font-bold border', job.isActive ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700')}>{job.isActive ? '● Active' : '● Closed'}</span>
           </div>
           <div>
             <p className="type-label mb-2">AI-Extracted Required Skills</p>
-            <div className="flex flex-wrap gap-1.5">{job.requiredSkills.map(s => <span key={s} className="px-2.5 py-1 bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold rounded-md">{s}</span>)}</div>
+            <div className="flex flex-wrap gap-1.5">{job.requiredSkills.map(s => <span key={s} className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 text-xs font-semibold rounded-md">{s}</span>)}</div>
           </div>
           <div>
             <p className="type-label mb-3 flex items-center gap-1.5"><FileText size={11} className="text-indigo-400" />Full Job Description</p>
-            <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{job.description}</p>
+            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{job.description}</p>
           </div>
         </div>
-        <div className="flex-shrink-0 border-t border-slate-200 p-5 bg-white">
-          <button onClick={onClose} className="w-full py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold transition-colors">Close</button>
+        <div className="flex-shrink-0 border-t border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900">
+          <button onClick={onClose} className="w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold transition-colors cursor-pointer">Close</button>
         </div>
       </div>
     </div>

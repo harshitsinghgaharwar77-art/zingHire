@@ -42,20 +42,21 @@
 }
 
 .dark {
+  color-scheme: dark;
   /* Theme tokens - Dark */
   --bg-gradient:  linear-gradient(135deg, #070a13 0%, #0c1120 50%, #0a0e1a 100%);
   --text-main:    #f8fafc;
   --text-body:    #94a3b8;
   --text-muted:   #64748b;
-  --glass-bg:     rgba(15, 23, 42, 0.78);
-  --glass-border: rgba(51, 65, 85, 0.55);
+  --glass-bg:     rgba(15, 23, 42, 0.82);
+  --glass-border: rgba(51, 65, 85, 0.65);
   --glass-blur:   blur(20px) saturate(170%);
-  --nav-bg:       rgba(10, 14, 26, 0.85);
-  --nav-border:   rgba(30, 41, 59, 0.75);
-  --card-bg:      rgba(15, 23, 42, 0.82);
-  --card-border:  rgba(30, 41, 59, 0.8);
-  --shadow-md:    0 4px 20px rgba(0, 0, 0, 0.45);
-  --shadow-lg:    0 10px 40px rgba(0, 0, 0, 0.65);
+  --nav-bg:       rgba(10, 14, 26, 0.9);
+  --nav-border:   rgba(51, 65, 85, 0.7);
+  --card-bg:      rgba(15, 23, 42, 0.88);
+  --card-border:  rgba(51, 65, 85, 0.65);
+  --shadow-md:    0 4px 20px rgba(0, 0, 0, 0.55);
+  --shadow-lg:    0 10px 40px rgba(0, 0, 0, 0.75);
 }
 
 /* ── Base ─────────────────────────────────────────────────────────────────── */
@@ -506,3 +507,191 @@
   .shadow-card       { box-shadow: var(--shadow-sm); }
   .shadow-card-hover { box-shadow: var(--shadow-md); }
 }
+
+/* ============================================================
+   Dark Mode System-Wide Fallbacks & Enhancements
+   Ensures exceptional visual contrast across cards, text, 
+   pills, inputs, and interactive surfaces in Dark Mode.
+   ============================================================ */
+
+/* ── Typography Contrast in Dark Mode ── */
+.dark h1:not([class*="dark:text-"]):not([class*="gradient-text"]):not([class*="bg-clip-text"]),
+.dark h2:not([class*="dark:text-"]):not([class*="gradient-text"]):not([class*="bg-clip-text"]),
+.dark h3:not([class*="dark:text-"]):not([class*="gradient-text"]):not([class*="bg-clip-text"]),
+.dark h4:not([class*="dark:text-"]):not([class*="gradient-text"]):not([class*="bg-clip-text"]),
+.dark h5:not([class*="dark:text-"]):not([class*="gradient-text"]):not([class*="bg-clip-text"]),
+.dark h6:not([class*="dark:text-"]):not([class*="gradient-text"]):not([class*="bg-clip-text"]) {
+  color: #f8fafc;
+}
+
+.dark .text-slate-900:not([class*="dark:text-"]) {
+  color: #f8fafc !important;
+}
+.dark .text-slate-800:not([class*="dark:text-"]) {
+  color: #f1f5f9 !important;
+}
+.dark .text-slate-700:not([class*="dark:text-"]) {
+  color: #e2e8f0 !important;
+}
+.dark .text-slate-600:not([class*="dark:text-"]) {
+  color: #cbd5e1 !important;
+}
+.dark .text-slate-500:not([class*="dark:text-"]) {
+  color: #94a3b8 !important;
+}
+
+/* Deep color text fallbacks for badges / alert banners */
+.dark .text-indigo-900:not([class*="dark:text-"]) {
+  color: #e0e7ff !important;
+}
+.dark .text-indigo-800:not([class*="dark:text-"]) {
+  color: #c7d2fe !important;
+}
+.dark .text-indigo-700:not([class*="dark:text-"]) {
+  color: #a5b4fc !important;
+}
+.dark .text-emerald-900:not([class*="dark:text-"]) {
+  color: #d1fae5 !important;
+}
+.dark .text-emerald-800:not([class*="dark:text-"]) {
+  color: #a7f3d0 !important;
+}
+.dark .text-emerald-700:not([class*="dark:text-"]) {
+  color: #6ee7b7 !important;
+}
+.dark .text-amber-900:not([class*="dark:text-"]) {
+  color: #fef3c7 !important;
+}
+.dark .text-amber-800:not([class*="dark:text-"]) {
+  color: #fde68a !important;
+}
+.dark .text-amber-700:not([class*="dark:text-"]) {
+  color: #fcd34d !important;
+}
+.dark .text-red-900:not([class*="dark:text-"]),
+.dark .text-rose-900:not([class*="dark:text-"]) {
+  color: #ffe4e6 !important;
+}
+.dark .text-red-800:not([class*="dark:text-"]),
+.dark .text-rose-800:not([class*="dark:text-"]) {
+  color: #fecdd3 !important;
+}
+.dark .text-red-700:not([class*="dark:text-"]),
+.dark .text-rose-700:not([class*="dark:text-"]) {
+  color: #fda4af !important;
+}
+
+/* ── Surfaces & Card Enhancements in Dark Mode ── */
+.dark .enterprise-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.dark .stat-card {
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.dark .job-card {
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Default light backgrounds adapted to dark glass surfaces */
+.dark .bg-white:not([class*="dark:bg-"]):not([class*="bg-white/"]):not([class*="bg-gradient-"]) {
+  background-color: rgba(15, 23, 42, 0.92);
+  color: #f8fafc;
+}
+.dark .bg-slate-50:not([class*="dark:bg-"]) {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+}
+.dark .bg-slate-100:not([class*="dark:bg-"]) {
+  background-color: rgba(30, 41, 59, 0.75) !important;
+}
+.dark .hover\:bg-slate-50:hover:not([class*="dark:hover:bg-"]) {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+}
+.dark .hover\:bg-slate-100:hover:not([class*="dark:hover:bg-"]) {
+  background-color: rgba(51, 65, 85, 0.6) !important;
+}
+
+/* Badge & Banner Backgrounds */
+.dark .bg-indigo-50:not([class*="dark:bg-"]) {
+  background-color: rgba(79, 70, 229, 0.2) !important;
+}
+.dark .bg-indigo-100:not([class*="dark:bg-"]) {
+  background-color: rgba(79, 70, 229, 0.3) !important;
+}
+.dark .bg-emerald-50:not([class*="dark:bg-"]) {
+  background-color: rgba(5, 150, 105, 0.2) !important;
+}
+.dark .bg-emerald-100:not([class*="dark:bg-"]) {
+  background-color: rgba(5, 150, 105, 0.3) !important;
+}
+.dark .bg-violet-50:not([class*="dark:bg-"]) {
+  background-color: rgba(124, 58, 237, 0.2) !important;
+}
+.dark .bg-violet-100:not([class*="dark:bg-"]) {
+  background-color: rgba(124, 58, 237, 0.3) !important;
+}
+.dark .bg-amber-50:not([class*="dark:bg-"]) {
+  background-color: rgba(217, 119, 6, 0.2) !important;
+}
+.dark .bg-amber-100:not([class*="dark:bg-"]) {
+  background-color: rgba(217, 119, 6, 0.3) !important;
+}
+.dark .bg-red-50:not([class*="dark:bg-"]),
+.dark .bg-rose-50:not([class*="dark:bg-"]) {
+  background-color: rgba(225, 29, 72, 0.2) !important;
+}
+
+/* ── Borders in Dark Mode ── */
+.dark .border-slate-50:not([class*="dark:border-"]) {
+  border-color: rgba(51, 65, 85, 0.35) !important;
+}
+.dark .border-slate-100:not([class*="dark:border-"]) {
+  border-color: rgba(51, 65, 85, 0.45) !important;
+}
+.dark .border-slate-200:not([class*="dark:border-"]) {
+  border-color: rgba(51, 65, 85, 0.6) !important;
+}
+.dark .border-slate-300:not([class*="dark:border-"]) {
+  border-color: rgba(71, 85, 105, 0.7) !important;
+}
+.dark .border-indigo-100:not([class*="dark:border-"]),
+.dark .border-indigo-200:not([class*="dark:border-"]) {
+  border-color: rgba(99, 102, 241, 0.35) !important;
+}
+.dark .border-emerald-100:not([class*="dark:border-"]),
+.dark .border-emerald-200:not([class*="dark:border-"]) {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+.dark .border-amber-100:not([class*="dark:border-"]),
+.dark .border-amber-200:not([class*="dark:border-"]) {
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+.dark .border-red-100:not([class*="dark:border-"]),
+.dark .border-red-200:not([class*="dark:border-"]) {
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(51, 65, 85, 0.5) !important;
+}
+
+/* ── Inputs and Form Controls in Dark Mode ── */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([class*="dark:bg-"]),
+.dark textarea:not([class*="dark:bg-"]),
+.dark select:not([class*="dark:bg-"]) {
+  background-color: rgba(15, 23, 42, 0.85) !important;
+  color: #f8fafc !important;
+  border-color: rgba(51, 65, 85, 0.8) !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* ── Modal Dialogs in Dark Mode ── */
+.dark .bg-white.rounded-2xl,
+.dark .bg-white.rounded-t-2xl {
+  background-color: #0f172a !important;
+  border-color: rgba(51, 65, 85, 0.7) !important;
+}
+

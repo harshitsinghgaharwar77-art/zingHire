@@ -295,7 +295,7 @@ export const checkAndApply = async (req: Request, res: Response): Promise<void> 
             type: 'NEW_APPLICATION_RECEIVED',
             title: '📥 New Candidate Applied',
             message: `${studentName} applied to "${job.title}" with a ${matchScore}% match score.`,
-            linkUrl: `/recruiter/dashboard?jobId=${job.id}`,
+            linkUrl: `/recruiter?jobId=${job.id}`,
           },
         });
         emitToUser(job.recruiterId, 'recruiter:new_applicant', {

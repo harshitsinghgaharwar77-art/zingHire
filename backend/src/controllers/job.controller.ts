@@ -565,7 +565,7 @@ export const updateApplicationStatus = async (req: Request, res: Response): Prom
           type: 'APPLICATION_SHORTLISTED',
           title: '🎉 You have been Shortlisted!',
           message: `Congratulations! Your application for "${application.job.title}" has been shortlisted. Real-time chat with the recruiter is now open!`,
-          linkUrl: `/student/dashboard?conversationId=${conversation.id}`,
+          linkUrl: `/student?conversationId=${conversation.id}`,
         },
       });
 
@@ -586,7 +586,7 @@ export const updateApplicationStatus = async (req: Request, res: Response): Prom
           type: 'APPLICATION_REJECTED',
           title: 'Application Status Update',
           message: `Your application for "${application.job.title}" has been reviewed. The recruiter has chosen to proceed with other candidates.`,
-          linkUrl: `/student/dashboard`,
+          linkUrl: `/student`,
         },
       });
 

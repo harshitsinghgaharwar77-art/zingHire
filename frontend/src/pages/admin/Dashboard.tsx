@@ -105,10 +105,10 @@ export default function AdminDashboard() {
     <div className="space-y-6 animate-fade-in w-full">
       {/* ── Page header ──────────────────────────────────────────────────── */}
       <div className="section-header">
-        <h1 className="text-2xl font-black text-slate-900">
+        <h1 className="text-2xl font-black text-slate-900 dark:text-white">
           Admin Dashboard
         </h1>
-        <p className="text-slate-500 mt-1 text-sm">
+        <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">
           Placement Cell · System Overview and Activity Monitoring
         </p>
       </div>
@@ -120,11 +120,11 @@ export default function AdminDashboard() {
           Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="stat-card animate-pulse">
               <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 bg-slate-200 rounded-xl" />
-                <div className="w-16 h-5 bg-slate-200 rounded-full" />
+                <div className="w-10 h-10 bg-slate-200 dark:bg-slate-800 rounded-xl" />
+                <div className="w-16 h-5 bg-slate-200 dark:bg-slate-800 rounded-full" />
               </div>
-              <div className="w-20 h-9 bg-slate-200 rounded-lg mb-2" />
-              <div className="w-32 h-3 bg-slate-100 rounded" />
+              <div className="w-20 h-9 bg-slate-200 dark:bg-slate-800 rounded-lg mb-2" />
+              <div className="w-32 h-3 bg-slate-100 dark:bg-slate-800/60 rounded" />
             </div>
           ))
         ) : (
@@ -137,8 +137,8 @@ export default function AdminDashboard() {
                 <span className={cn(
                   'flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full',
                   trendUp
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    : 'bg-red-50 text-red-700 border border-red-200',
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+                    : 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800',
                 )}>
                   {trendUp
                     ? <TrendingUp size={11} />
@@ -147,10 +147,10 @@ export default function AdminDashboard() {
                   {trend}
                 </span>
               </div>
-              <p className="text-4xl font-black text-slate-900 tabular-nums">{value}</p>
+              <p className="text-4xl font-black text-slate-900 dark:text-white tabular-nums">{value}</p>
               <div className="mt-2 flex flex-col">
-                <p className="text-slate-500 text-xs font-medium">{label}</p>
-                <p className="text-slate-400 text-xs mt-0.5">{sub}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs font-medium">{label}</p>
+                <p className="text-slate-400 dark:text-slate-500 text-xs mt-0.5">{sub}</p>
               </div>
             </div>
           ))
@@ -159,15 +159,15 @@ export default function AdminDashboard() {
 
       {/* ── System Activity Table ────────────────────────────────────────── */}
       <div className="enterprise-card overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white">
-          <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2">
-            <Briefcase size={15} className="text-indigo-500" />
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90">
+          <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+            <Briefcase size={15} className="text-indigo-500 dark:text-indigo-400" />
             System Activity — Recent Job Postings
           </h2>
           <button
             onClick={() => void handleRefreshAll()}
             disabled={loading || statsLoading}
-            className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+            className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             aria-label="Refresh all"
           >
             <RefreshCw size={14} className={(loading || statsLoading) ? 'animate-spin' : ''} />
@@ -177,16 +177,16 @@ export default function AdminDashboard() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Job Title</th>
-                <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Company / Recruiter</th>
-                <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Required Skills</th>
-                <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Applicants</th>
-                <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Status</th>
-                <th className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Date Posted</th>
+              <tr className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800">
+                <th className="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Job Title</th>
+                <th className="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Company / Recruiter</th>
+                <th className="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Required Skills</th>
+                <th className="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Applicants</th>
+                <th className="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Status</th>
+                <th className="px-6 py-3 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Date Posted</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-16 text-center">
@@ -197,22 +197,22 @@ export default function AdminDashboard() {
               ) : jobs.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-16 text-center">
-                    <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
                       <Briefcase size={22} className="text-slate-400" />
                     </div>
-                    <p className="font-medium text-slate-700 text-sm">No active jobs in the system.</p>
+                    <p className="font-medium text-slate-700 dark:text-slate-300 text-sm">No active jobs in the system.</p>
                   </td>
                 </tr>
               ) : (
                 jobs.map((job) => (
-                  <tr key={job.id} className="hover:bg-slate-50/70 transition-colors bg-white">
+                  <tr key={job.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition-colors bg-white dark:bg-slate-900/40">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="font-semibold text-slate-900 text-sm">{job.title}</p>
+                      <p className="font-semibold text-slate-900 dark:text-white text-sm">{job.title}</p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {job.recruiter?.recruiterProfile ? (
                         <>
-                          <span className="font-semibold text-slate-800 text-sm">
+                          <span className="font-semibold text-slate-800 dark:text-slate-200 text-sm">
                             {job.recruiter.recruiterProfile.companyName}
                           </span>
                           <span className="text-slate-400 block text-xs mt-0.5">
@@ -226,7 +226,7 @@ export default function AdminDashboard() {
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
                         {job.requiredSkills.slice(0, 3).map((s) => (
-                          <span key={s} className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[11px] rounded-md font-semibold border border-indigo-100">
+                          <span key={s} className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-[11px] rounded-md font-semibold border border-indigo-100 dark:border-indigo-800/60">
                             {s}
                           </span>
                         ))}
@@ -238,14 +238,14 @@ export default function AdminDashboard() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-bold text-slate-900 text-sm">{job._count?.applications ?? 0}</span>
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">{job._count?.applications ?? 0}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={cn(
                         'px-2.5 py-1 rounded-full text-xs font-bold border',
                         job.isActive
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                          : 'bg-slate-100 text-slate-500 border-slate-200',
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700',
                       )}>
                         {job.isActive ? '● Active' : '● Closed'}
                       </span>
