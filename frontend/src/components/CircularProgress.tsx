@@ -20,14 +20,14 @@ export default function CircularProgress({ score, size = 80, stroke = 8, classNa
   const filled      = (score / 100) * circumference;
 
   const colorClass =
-    score >= 80 ? 'text-emerald-600 dark:text-emerald-400'
-    : score >= 60 ? 'text-amber-600 dark:text-amber-400'
-    : 'text-rose-600 dark:text-rose-400';
+    score >= 80 ? 'text-[#2D7A58] dark:text-[#52B788]'
+    : score >= 60 ? 'text-[#B85C38] dark:text-[#D9734E]'
+    : 'text-[#C24134] dark:text-[#F07167]';
 
   const strokeColor =
-    score >= 80 ? 'stroke-emerald-600 dark:stroke-emerald-400'
-    : score >= 60 ? 'stroke-amber-600 dark:stroke-amber-400'
-    : 'stroke-rose-600 dark:stroke-rose-400';
+    score >= 80 ? 'stroke-[#2D7A58] dark:stroke-[#52B788]'
+    : score >= 60 ? 'stroke-[#B85C38] dark:stroke-[#D9734E]'
+    : 'stroke-[#C24134] dark:stroke-[#F07167]';
 
   return (
     <div className={cn('relative inline-flex items-center justify-center', className)}
@@ -38,13 +38,13 @@ export default function CircularProgress({ score, size = 80, stroke = 8, classNa
         viewBox={`0 0 ${size} ${size}`}
         style={{ transform: 'rotate(-90deg)' }}
       >
-        {/* Track — adaptive light/dark */}
+        {/* Track — adaptive warm sand */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
           fill="none"
-          className="stroke-slate-200 dark:stroke-slate-800/90 transition-colors"
+          className="stroke-[#E9DFD1] dark:stroke-[#382E25] transition-colors"
           strokeWidth={stroke}
         />
         {/* Fill */}

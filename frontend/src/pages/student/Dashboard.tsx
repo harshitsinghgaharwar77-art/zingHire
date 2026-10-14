@@ -2,10 +2,10 @@ import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   UploadCloud, FileText, Zap, Trophy, TrendingUp,
-  Briefcase, CheckCircle, Loader2, RefreshCw, ChevronRight,
+  Briefcase, CheckCircle, Loader2, RefreshCw,
   Info, GraduationCap, Building2, X, BookOpen, Award,
   Target, LayoutDashboard, BarChart2, Lightbulb,
-  Star, Clock, ExternalLink, AlertCircle, MessageSquare,
+  Star, ExternalLink, AlertCircle, MessageSquare,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../lib/axios';
@@ -159,25 +159,25 @@ function RadarChart({ values, size = 180 }: { values: { label: string; value: nu
       {/* Grid rings */}
       {gridLevels.map(level => {
         const pts = values.map((_, i) => { const p = toXY(i, level); return `${p.x},${p.y}`; }).join(' ');
-        return <polygon key={level} points={pts} fill="none" stroke="#e2e8f0" strokeWidth="1" />;
+        return <polygon key={level} points={pts} fill="none" stroke="#E9DFD1" strokeWidth="1" />;
       })}
       {/* Axis lines */}
       {values.map((_, i) => {
         const p = toXY(i, 1);
-        return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#e2e8f0" strokeWidth="1" />;
+        return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#E9DFD1" strokeWidth="1" />;
       })}
       {/* Data fill */}
-      <polygon points={polygon} fill="rgba(99,102,241,0.15)" stroke="#6366f1" strokeWidth="2" className="radar-polygon" />
+      <polygon points={polygon} fill="rgba(184,92,56,0.18)" stroke="#B85C38" strokeWidth="2" className="radar-polygon" />
       {/* Data dots */}
       {dataPoints.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r="4" fill="#6366f1" stroke="white" strokeWidth="2" className="score-glow" />
+        <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="#B85C38" stroke="white" strokeWidth="1.5" />
       ))}
       {/* Labels */}
       {values.map((v, i) => {
         const lp = toXY(i, 1.22);
         return (
           <text key={i} x={lp.x} y={lp.y} textAnchor="middle" dominantBaseline="middle"
-            fontSize="9" fontWeight="600" fill="#64748b" fontFamily="Inter, sans-serif">
+            fontSize="9" fontWeight="600" fill="#74685C" fontFamily="Inter, sans-serif">
             {v.label}
           </text>
         );
@@ -491,9 +491,9 @@ export default function StudentDashboard() {
 
         {/* Profile card */}
         <div className="enterprise-card p-5 flex flex-col items-center text-center gap-3">
-          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600
-                          flex items-center justify-center shadow-md ring-4 ring-indigo-100 dark:ring-indigo-900/50">
-            <span className="text-white font-black text-xl">
+          <div className="w-13 h-13 rounded-full bg-[#B85C38] dark:bg-[#D9734E]
+                          flex items-center justify-center shadow-xs ring-4 ring-[#FAEEE9] dark:ring-[#2C241D]">
+            <span className="text-white font-bold text-lg">
               {profile?.firstName?.[0]?.toUpperCase() ?? '?'}
             </span>
           </div>
@@ -505,23 +505,23 @@ export default function StudentDashboard() {
           ) : (
             <>
               <div>
-                <p className="text-sm font-bold text-slate-900 dark:text-white">{displayName}</p>
-                <p className="text-xs text-slate-400 mt-0.5 truncate max-w-[180px]">{profile?.college ?? 'College not set'}</p>
+                <p className="text-sm font-bold text-[#30291F] dark:text-[#F6EFE6]">{displayName}</p>
+                <p className="text-xs text-[#74685C] dark:text-[#A89A8A] mt-0.5 truncate max-w-[180px]">{profile?.college ?? 'College not set'}</p>
               </div>
               <div className="flex items-center gap-2 flex-wrap justify-center">
-                <span className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 text-xs font-bold rounded-full">
+                <span className="px-2.5 py-0.5 bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] border border-[#EFC8B9] dark:border-[rgba(217,115,78,0.32)] text-[#B85C38] dark:text-[#D9734E] text-xs font-semibold rounded-md">
                   CGPA {profile?.cgpa.toFixed(1) ?? '—'}
                 </span>
-                <span className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-full border border-slate-200 dark:border-slate-700">
+                <span className="px-2 py-0.5 bg-[#F3EBDD] dark:bg-[#2C241D] text-[#74685C] dark:text-[#D8CEBF] text-xs font-medium rounded-md border border-[#E9DFD1] dark:border-[#382E25]">
                   {profile?.experienceYears ?? 0} yrs
                 </span>
               </div>
               <div className={cn(
-                'w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold',
-                profile?.resumeUrl ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/60'
-                                   : 'bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800/60',
+                'w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold border',
+                profile?.resumeUrl ? 'bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)] text-[#2D7A58] dark:text-[#52B788] border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)]'
+                                   : 'bg-[#FDEEED] dark:bg-[rgba(194,65,52,0.22)] text-[#C24134] dark:text-[#F07167] border-[#F6BDB7] dark:border-[rgba(240,113,103,0.35)]',
               )}>
-                {profile?.resumeUrl ? <><CheckCircle size={11} /> Resume Active</> : <><UploadCloud size={11} /> No Resume</>}
+                {profile?.resumeUrl ? <><CheckCircle size={12} /> Resume Active</> : <><UploadCloud size={12} /> No Resume</>}
               </div>
             </>
           )}
@@ -529,17 +529,17 @@ export default function StudentDashboard() {
 
         {/* Nav */}
         <div className="enterprise-card p-2 flex flex-col gap-0.5">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 py-1.5">Navigation</p>
+          <p className="text-[10px] font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider px-3 py-1.5">Navigation</p>
           {navItems.map(({ view, icon, label }) => (
             <button
               key={view}
               onClick={() => setActiveView(view)}
               className={cn('nav-item w-full text-left', activeView === view && 'active')}
             >
-              <span className="nav-icon text-slate-400">{icon}</span>
+              <span className="nav-icon text-[#74685C] dark:text-[#A89A8A]">{icon}</span>
               <span>{label}</span>
               {view === 'matches' && matches.length > 0 && (
-                <span className="ml-auto text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/60 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.5 rounded-full">
+                <span className="ml-auto text-[10px] font-bold bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] text-[#B85C38] dark:text-[#D9734E] px-1.5 py-0.5 rounded-md">
                   {matches.length}
                 </span>
               )}
@@ -551,9 +551,7 @@ export default function StudentDashboard() {
         <button
           onClick={() => { setActiveView('documents'); fileRef.current?.click(); }}
           disabled={uploading}
-          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-indigo-600 text-white
-                     text-sm font-bold rounded-xl hover:bg-indigo-700 active:scale-[0.97] transition-all
-                     shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="btn-primary w-full text-xs !py-2.5 !px-3 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {uploading ? <Loader2 size={14} className="animate-spin" /> : <UploadCloud size={14} />}
           {uploading ? 'Parsing…' : profile?.resumeUrl ? 'Update Resume' : 'Upload Resume'}
@@ -575,28 +573,29 @@ export default function StudentDashboard() {
             <div className="section-header">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                  <h1 className="text-2xl font-black text-slate-900 dark:text-white">Student Talent Hub</h1>
-                  <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-sm">Welcome back, <span className="font-semibold text-slate-700 dark:text-slate-200">{displayName}</span></p>
+                  <h1 className="text-2xl font-black text-[#30291F] dark:text-[#F6EFE6]">Candidate Talent Hub</h1>
+                  <p className="text-[#74685C] dark:text-[#B0A294] mt-0.5 text-sm">Welcome back, <span className="font-semibold text-[#30291F] dark:text-[#F6EFE6]">{displayName}</span></p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => openChat(null)}
-                    className="flex items-center gap-1.5 px-3 py-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/90 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 border border-[#E9DFD1] dark:border-[#382E25] bg-white dark:bg-[#221C16] hover:bg-[#F3EBDD] dark:hover:bg-[#2C241D] text-[#30291F] dark:text-[#F6EFE6] text-xs font-semibold rounded-lg shadow-xs transition-colors cursor-pointer"
                   >
-                    <MessageSquare size={14} className="text-indigo-600 dark:text-indigo-400" />
+                    <MessageSquare size={14} className="text-[#B85C38] dark:text-[#D9734E]" />
                     <span>Live Chat</span>
                   </button>
                   <NotificationBell onOpenChat={(convId) => openChat(convId ?? null)} />
                   {profile && (
-                    <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 rounded-xl px-3 py-1.5">
-                      <CheckCircle size={14} className="text-emerald-600 dark:text-emerald-400" />
-                      <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">Profile Active</span>
+                    <div className="flex items-center gap-1.5 bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)] border border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)] rounded-lg px-2.5 py-1">
+                      <CheckCircle size={13} className="text-[#2D7A58] dark:text-[#52B788]" />
+                      <span className="text-xs font-semibold text-[#2D7A58] dark:text-[#52B788]">Profile Active</span>
                     </div>
                   )}
                   <button onClick={() => void fetchMatches()} disabled={loadingMatches}
-                    className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-cyan-400 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors cursor-pointer">
-                    <RefreshCw size={15} className={loadingMatches ? 'animate-spin' : ''} />
+                    className="p-1.5 rounded-lg text-[#74685C] hover:text-[#B85C38] dark:hover:text-[#D9734E] hover:bg-[#F3EBDD] dark:hover:bg-[#2C241D] transition-colors cursor-pointer"
+                    title="Refresh matches">
+                    <RefreshCw size={14} className={loadingMatches ? 'animate-spin' : ''} />
                   </button>
                 </div>
               </div>
@@ -607,17 +606,17 @@ export default function StudentDashboard() {
               {loadingProfile ? Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="stat-card"><div className="skeleton h-3.5 w-20 mb-4" /><div className="skeleton h-8 w-14 mb-1" /><div className="skeleton h-3 w-24" /></div>
               )) : [
-                { label: 'Skills Parsed', value: profile?.parsedSkills.length ?? 0, sub: 'from your resume', icon: <Zap size={18} className="text-indigo-600" />, bg: 'bg-indigo-50' },
-                { label: 'Job Matches',   value: matches.length,  sub: `${eligibleCount} eligible`, icon: <Trophy size={18} className="text-emerald-600" />, bg: 'bg-emerald-50' },
-                { label: 'Top Score',     value: matches[0] ? `${matches[0].matchScore}%` : '—', sub: 'best AI match', icon: <TrendingUp size={18} className="text-violet-600" />, bg: 'bg-violet-50' },
+                { label: 'Skills Parsed', value: profile?.parsedSkills.length ?? 0, sub: 'from your resume', icon: <Zap size={18} className="text-[#B85C38] dark:text-[#D9734E]" />, bg: 'bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)]' },
+                { label: 'Job Matches',   value: matches.length,  sub: `${eligibleCount} eligible`, icon: <Trophy size={18} className="text-[#2D7A58] dark:text-[#52B788]" />, bg: 'bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)]' },
+                { label: 'Top Score',     value: matches[0] ? `${matches[0].matchScore}%` : '—', sub: 'best AI match', icon: <TrendingUp size={18} className="text-[#B57324] dark:text-[#E49D46]" />, bg: 'bg-[#FEF6EB] dark:bg-[rgba(181,115,36,0.22)]' },
               ].map(({ label, value, sub, icon, bg }, i) => (
                 <div key={label} className={cn('stat-card animate-view-enter', i === 0 && 'stagger-1', i === 1 && 'stagger-2', i === 2 && 'stagger-3')}>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
+                    <span className="text-xs font-semibold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wide">{label}</span>
                     <div className={cn('p-2 rounded-lg', bg)}>{icon}</div>
                   </div>
-                  <p className="text-3xl font-black text-slate-900 dark:text-white mb-0.5 animate-count">{value}</p>
-                  <p className="text-xs text-slate-400 font-medium">{sub}</p>
+                  <p className="text-3xl font-black text-[#30291F] dark:text-[#F6EFE6] mb-0.5">{value}</p>
+                  <p className="text-xs text-[#74685C] dark:text-[#A89A8A] font-medium">{sub}</p>
                 </div>
               ))}
             </div>
@@ -626,33 +625,33 @@ export default function StudentDashboard() {
             {profile && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="enterprise-card p-5 animate-view-enter stagger-2">
-                  <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-                    <GraduationCap size={13} className="text-indigo-400" />Profile Overview
+                  <h2 className="text-xs font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                    <GraduationCap size={13} className="text-[#B85C38] dark:text-[#D9734E]" />Profile Overview
                   </h2>
                   <div className="grid grid-cols-3 gap-2 mb-3">
                     {[
-                      { label: 'CGPA',    value: profile.cgpa.toFixed(1),          accent: 'text-indigo-700 dark:text-indigo-300' },
-                      { label: 'Exp.',    value: `${profile.experienceYears} yrs`,  accent: 'text-slate-800 dark:text-slate-100' },
-                      { label: 'Resume',  value: profile.resumeUrl ? 'Active ✓' : 'Missing ✗', accent: profile.resumeUrl ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' },
+                      { label: 'CGPA',    value: profile.cgpa.toFixed(1),          accent: 'text-[#B85C38] dark:text-[#D9734E]' },
+                      { label: 'Exp.',    value: `${profile.experienceYears} yrs`,  accent: 'text-[#30291F] dark:text-[#F6EFE6]' },
+                      { label: 'Resume',  value: profile.resumeUrl ? 'Active ✓' : 'Missing ✗', accent: profile.resumeUrl ? 'text-[#2D7A58] dark:text-[#52B788]' : 'text-[#C24134] dark:text-[#F07167]' },
                     ].map(({ label, value, accent }) => (
-                      <div key={label} className="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-200 dark:border-slate-700/60 text-center">
-                        <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1 font-semibold">{label}</p>
+                      <div key={label} className="bg-[#FAF6EF] dark:bg-[#2C241D] rounded-xl p-3 border border-[#E9DFD1] dark:border-[#382E25] text-center">
+                        <p className="text-[10px] text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-1 font-semibold">{label}</p>
                         <p className={cn('text-sm font-black truncate', accent)}>{value}</p>
                       </div>
                     ))}
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3 border border-slate-200 dark:border-slate-700/60 mb-4">
-                    <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5 font-semibold">College</p>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{profile.college}</p>
+                  <div className="bg-[#FAF6EF] dark:bg-[#2C241D] rounded-xl p-3 border border-[#E9DFD1] dark:border-[#382E25] mb-4">
+                    <p className="text-[10px] text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-0.5 font-semibold">College</p>
+                    <p className="text-sm font-bold text-[#30291F] dark:text-[#F6EFE6] truncate">{profile.college}</p>
                   </div>
                   {profile.parsedSkills.length > 0 && (
                     <div>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 font-bold flex items-center gap-1"><Zap size={10} className="text-indigo-400" />Parsed Skills</p>
+                      <p className="text-[10px] text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-2 font-bold flex items-center gap-1"><Zap size={10} className="text-[#B85C38] dark:text-[#D9734E]" />Parsed Skills</p>
                       <div className="flex flex-wrap gap-1">
                         {profile.parsedSkills.slice(0, 12).map(skill => (
-                          <span key={skill} className="px-2 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[11px] font-semibold rounded-md">{skill}</span>
+                          <span key={skill} className="px-2 py-0.5 bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] border border-[#EFC8B9] dark:border-[rgba(217,115,78,0.32)] text-[#B85C38] dark:text-[#D9734E] text-[11px] font-semibold rounded-md">{skill}</span>
                         ))}
-                        {profile.parsedSkills.length > 12 && <span className="text-xs text-slate-400 font-medium self-center">+{profile.parsedSkills.length - 12} more</span>}
+                        {profile.parsedSkills.length > 12 && <span className="text-xs text-[#74685C] dark:text-[#A89A8A] font-medium self-center">+{profile.parsedSkills.length - 12} more</span>}
                       </div>
                     </div>
                   )}
@@ -660,24 +659,24 @@ export default function StudentDashboard() {
 
                 {/* Skill Mastery */}
                 <div className="enterprise-card p-5 animate-view-enter stagger-3">
-                  <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
-                    <BarChart2 size={13} className="text-indigo-400" />Skill Mastery
+                  <h2 className="text-xs font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <BarChart2 size={13} className="text-[#B85C38] dark:text-[#D9734E]" />Skill Market Demand
                   </h2>
-                  <p className="text-[10px] text-slate-400 mb-4">% of available jobs requiring each skill</p>
+                  <p className="text-[10px] text-[#74685C] dark:text-[#A89A8A] mb-4">% of active roles requiring your skills</p>
                   {skillMastery.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-28 text-center">
-                      <UploadCloud size={28} className="text-slate-300 mb-2" /><p className="text-sm text-slate-400">Upload resume to see skill demand</p>
+                      <UploadCloud size={28} className="text-[#74685C] dark:text-[#A89A8A] mb-2" /><p className="text-sm text-[#74685C] dark:text-[#A89A8A]">Upload resume to see skill demand</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
                       {skillMastery.map(({ skill, pct }, i) => (
                         <div key={skill} className={cn('animate-view-enter', `stagger-${Math.min(i + 1, 6)}`)}>
                           <div className="flex justify-between items-center mb-1">
-                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 capitalize truncate max-w-[70%]">{skill}</span>
-                            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 ml-2">{pct}%</span>
+                            <span className="text-xs font-semibold text-[#30291F] dark:text-[#F6EFE6] capitalize truncate max-w-[70%]">{skill}</span>
+                            <span className="text-xs font-bold text-[#B85C38] dark:text-[#D9734E] ml-2">{pct}%</span>
                           </div>
-                          <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <div className={cn('h-full rounded-full skill-bar-fill', pct >= 70 ? 'bg-gradient-to-r from-indigo-500 to-violet-500' : pct >= 40 ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-amber-400 to-orange-400')}
+                          <div className="h-1.5 bg-[#FAF6EF] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] rounded-full overflow-hidden">
+                            <div className="h-full rounded-full bg-[#B85C38] dark:bg-[#D9734E] skill-bar-fill"
                               style={{ width: `${pct}%` }} />
                           </div>
                         </div>
@@ -691,14 +690,14 @@ export default function StudentDashboard() {
             {/* Quick match preview */}
             <div className="enterprise-card p-6 animate-view-enter stagger-4">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
-                  <Briefcase size={15} className="text-indigo-500" />Job Match Feed
-                  {matches.length > 0 && <span className="ml-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold">{matches.length}</span>}
+                <h2 className="text-sm font-bold text-[#30291F] dark:text-[#F6EFE6] flex items-center gap-2">
+                  <Briefcase size={15} className="text-[#B85C38] dark:text-[#D9734E]" />Job Match Feed
+                  {matches.length > 0 && <span className="ml-1 px-2 py-0.5 bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] text-[#B85C38] dark:text-[#D9734E] rounded-full text-xs font-bold">{matches.length}</span>}
                 </h2>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-indigo-500 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-lg uppercase tracking-wide">AI Match</span>
+                  <span className="text-[10px] font-bold text-[#B85C38] dark:text-[#D9734E] bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] border border-[#EFC8B9] dark:border-[rgba(217,115,78,0.32)] px-2 py-0.5 rounded-md uppercase tracking-wide">AI Match</span>
                   {matches.length > 3 && (
-                    <button onClick={() => setActiveView('matches')} className="text-xs text-indigo-600 font-semibold hover:underline underline-offset-2">View All →</button>
+                    <button onClick={() => setActiveView('matches')} className="text-xs text-[#B85C38] dark:text-[#D9734E] font-semibold hover:underline underline-offset-2 cursor-pointer">View All →</button>
                   )}
                 </div>
               </div>
@@ -722,22 +721,23 @@ export default function StudentDashboard() {
             <div className="section-header">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                  <h1 className="text-2xl font-black text-slate-900 dark:text-white">Job Matches</h1>
-                  <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-sm">AI-ranked roles based on your skills, CGPA and experience</p>
+                  <h1 className="text-2xl font-black text-[#30291F] dark:text-[#F6EFE6]">Job Discovery & Matches</h1>
+                  <p className="text-[#74685C] dark:text-[#B0A294] mt-0.5 text-sm">Transparent match scoring computed via Jaccard algorithm against your profile</p>
                 </div>
                 <button onClick={() => void fetchMatches()} disabled={loadingMatches}
-                  className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
-                  <RefreshCw size={15} className={loadingMatches ? 'animate-spin' : ''} />
+                  className="p-1.5 rounded-lg text-[#74685C] hover:text-[#B85C38] dark:hover:text-[#D9734E] hover:bg-[#F3EBDD] dark:hover:bg-[#2C241D] transition-colors cursor-pointer"
+                  title="Refresh matches">
+                  <RefreshCw size={14} className={loadingMatches ? 'animate-spin' : ''} />
                 </button>
               </div>
             </div>
 
             {/* Filter tabs */}
-            <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl w-fit border border-slate-200 dark:border-slate-700/60">
-              {([['all', 'All'], ['eligible', `Eligible (${eligibleCount})`], ['applied', `Applied (${appliedJobs.size})`]] as const).map(([key, label]) => (
+            <div className="flex items-center gap-1.5 p-1 bg-[#F3EBDD] dark:bg-[#2C241D] rounded-xl w-fit border border-[#E9DFD1] dark:border-[#382E25]">
+              {([['all', 'All Roles'], ['eligible', `Eligible (≥50%) · ${eligibleCount}`], ['applied', `Applied · ${appliedJobs.size}`]] as const).map(([key, label]) => (
                 <button key={key} onClick={() => setMatchFilter(key)}
-                  className={cn('px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200',
-                    matchFilter === key ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 shadow-sm border border-indigo-100 dark:border-indigo-500/30' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300')}>
+                  className={cn('px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer',
+                    matchFilter === key ? 'bg-white dark:bg-[#221C16] text-[#B85C38] dark:text-[#D9734E] shadow-xs border border-[#EFC8B9] dark:border-[rgba(217,115,78,0.32)] font-bold' : 'text-[#74685C] dark:text-[#A89A8A] hover:text-[#30291F] dark:hover:text-[#F6EFE6]')}>
                   {label}
                 </button>
               ))}
@@ -832,18 +832,24 @@ export default function StudentDashboard() {
                         </div>
 
                         {/* Demand bar */}
-                        <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-3">
-                          <div className={cn('h-full rounded-full skill-bar-fill',
-                            jobsPct >= 70 ? 'bg-gradient-to-r from-red-500 to-red-400'
-                            : jobsPct >= 40 ? 'bg-gradient-to-r from-orange-400 to-amber-400'
-                            : 'bg-gradient-to-r from-slate-400 to-slate-300')}
-                            style={{ width: `${jobsPct}%` }} />
+                        <div className="h-1.5 bg-[#FAF6EF] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] rounded-full overflow-hidden mb-3">
+                          <div
+                            className={cn(
+                              'h-full rounded-full skill-bar-fill',
+                              jobsPct >= 70
+                                ? 'bg-[#C24134]'
+                                : jobsPct >= 40
+                                ? 'bg-[#B57324]'
+                                : 'bg-[#74685C]'
+                            )}
+                            style={{ width: `${jobsPct}%` }}
+                          />
                         </div>
 
                         {/* Advice */}
-                        <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 rounded-xl p-3 flex items-start gap-2">
-                          <Lightbulb size={13} className="text-amber-500 mt-0.5 flex-shrink-0" />
-                          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{advice}</p>
+                        <div className="bg-[#FAF6EF] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] rounded-lg p-3 flex items-start gap-2">
+                          <Lightbulb size={13} className="text-[#B57324] dark:text-[#E49D46] mt-0.5 flex-shrink-0" />
+                          <p className="text-xs text-[#544A3E] dark:text-[#D8CEBF] leading-relaxed">{advice}</p>
                         </div>
                       </div>
                     ))}
@@ -853,8 +859,8 @@ export default function StudentDashboard() {
                 {/* Existing skills */}
                 {profile.parsedSkills.length > 0 && (
                   <div className="enterprise-card p-5">
-                    <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-                      <CheckCircle size={13} className="text-emerald-500" />Your Existing Skills
+                    <h2 className="text-xs font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                      <CheckCircle size={13} className="text-[#2D7A58] dark:text-[#52B788]" />Your Existing Skills
                     </h2>
                     <div className="flex flex-wrap gap-1.5">
                       {profile.parsedSkills.map(skill => (
@@ -872,29 +878,29 @@ export default function StudentDashboard() {
         {activeView === 'documents' && (
           <div className="space-y-5 animate-view-enter">
             <div className="section-header">
-              <h1 className="text-2xl font-black text-slate-900 dark:text-white">Documents</h1>
-              <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-sm">Manage your resume — the AI parses it on every upload</p>
+              <h1 className="text-2xl font-black text-[#30291F] dark:text-[#F6EFE6]">Documents & Resume</h1>
+              <p className="text-[#74685C] dark:text-[#B0A294] mt-0.5 text-sm">Manage your candidate resume — our AI parses skills automatically on upload</p>
             </div>
 
             {/* Status card */}
             {profile?.resumeUrl && (
-              <div className="enterprise-card p-5 border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/20 animate-view-enter">
+              <div className="enterprise-card p-5 border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)] bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)] animate-view-enter">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/50 rounded-xl flex items-center justify-center">
-                      <FileText size={20} className="text-emerald-600 dark:text-emerald-400" />
+                    <div className="w-10 h-10 bg-white dark:bg-[#221C16] rounded-xl flex items-center justify-center border border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)]">
+                      <FileText size={20} className="text-[#2D7A58] dark:text-[#52B788]" />
                     </div>
                     <div>
-                      <p className="font-bold text-emerald-900 dark:text-emerald-300">Resume Uploaded</p>
-                      <p className="text-sm text-emerald-700 dark:text-emerald-400 mt-0.5">
-                        {profile.parsedSkills.length} skills parsed successfully
+                      <p className="font-bold text-[#2D7A58] dark:text-[#52B788]">Active Resume on Profile</p>
+                      <p className="text-xs text-[#2D7A58]/80 dark:text-[#52B788]/80 mt-0.5">
+                        {profile.parsedSkills.length} skills verified and ready for matching
                       </p>
                     </div>
                   </div>
                   <a href={getViewableResumeUrl(profile.resumeUrl)} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-700/60 text-emerald-700 dark:text-emerald-300
-                               text-xs font-bold rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-950/40 transition-colors flex-shrink-0">
-                    <ExternalLink size={13} />View Resume
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white dark:bg-[#221C16] border border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)] text-[#2D7A58] dark:text-[#52B788]
+                               text-xs font-semibold rounded-lg hover:bg-[#D4EDDF] transition-colors flex-shrink-0">
+                    <ExternalLink size={13} />View PDF
                   </a>
                 </div>
               </div>
@@ -902,8 +908,8 @@ export default function StudentDashboard() {
 
             {/* Upload dropzone */}
             <div className="enterprise-card p-6 animate-view-enter stagger-2">
-              <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2 mb-4">
-                <UploadCloud size={15} className="text-indigo-500" />
+              <h2 className="text-sm font-bold text-[#30291F] dark:text-[#F6EFE6] flex items-center gap-2 mb-4">
+                <UploadCloud size={15} className="text-[#B85C38] dark:text-[#D9734E]" />
                 {profile?.resumeUrl ? 'Replace Resume' : 'Upload Resume'}
               </h2>
               <div
@@ -912,38 +918,38 @@ export default function StudentDashboard() {
                 onDragLeave={() => setDragOver(false)}
                 onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) void handleUpload(f); }}
                 className={cn(
-                  'border-2 border-dashed rounded-2xl p-14 flex flex-col items-center gap-4 cursor-pointer transition-all duration-300',
-                  uploading ? 'border-indigo-300 dark:border-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/20 cursor-not-allowed'
-                  : dragOver  ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 scale-[1.01] shadow-lg'
-                  : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 hover:scale-[1.005]',
+                  'border-2 border-dashed rounded-xl p-12 flex flex-col items-center gap-3 cursor-pointer transition-all duration-200',
+                  uploading ? 'border-[#B85C38] bg-[#FAEEE9]/50 dark:bg-[rgba(217,115,78,0.14)] cursor-not-allowed'
+                  : dragOver  ? 'border-[#B85C38] bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] scale-[1.01]'
+                  : 'border-[#E9DFD1] dark:border-[#382E25] bg-[#FAF6EF] dark:bg-[#2C241D] hover:border-[#B85C38] dark:hover:border-[#D9734E] hover:bg-[#FAEEE9]/40',
                 )}
               >
                 {uploading ? (
                   <>
-                    <Loader2 size={40} className="text-indigo-500 animate-spin" />
+                    <Loader2 size={36} className="text-[#B85C38] dark:text-[#D9734E] animate-spin" />
                     <div className="text-center">
-                      <p className="text-indigo-700 dark:text-indigo-300 font-bold text-base">Uploading & Parsing…</p>
-                      <p className="text-indigo-400 dark:text-indigo-300/80 text-sm mt-1">AI is extracting your skills</p>
+                      <p className="text-[#B85C38] dark:text-[#D9734E] font-bold text-sm">Uploading &amp; Parsing with Gemini 2.0…</p>
+                      <p className="text-[#74685C] dark:text-[#A89A8A] text-xs mt-1">Extracting technical skills and coursework</p>
                     </div>
                   </>
                 ) : dragOver ? (
                   <>
-                    <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/60 rounded-full flex items-center justify-center animate-scale-in">
-                      <UploadCloud size={32} className="text-indigo-600 dark:text-indigo-300" />
+                    <div className="w-12 h-12 bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.22)] rounded-full flex items-center justify-center">
+                      <UploadCloud size={24} className="text-[#B85C38] dark:text-[#D9734E]" />
                     </div>
-                    <p className="text-indigo-700 dark:text-indigo-300 font-bold text-base">Drop to upload!</p>
+                    <p className="text-[#B85C38] dark:text-[#D9734E] font-bold text-sm">Drop PDF to upload!</p>
                   </>
                 ) : (
                   <>
-                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
-                      <UploadCloud size={32} className="text-slate-400" />
+                    <div className="w-12 h-12 bg-[#F3EBDD] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] rounded-full flex items-center justify-center">
+                      <UploadCloud size={22} className="text-[#74685C] dark:text-[#A89A8A]" />
                     </div>
                     <div className="text-center">
-                      <p className="text-slate-700 dark:text-slate-200 font-semibold text-base">Drop your PDF here</p>
-                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
-                        or <span className="text-indigo-600 dark:text-indigo-400 font-bold underline underline-offset-2">click to browse</span>
+                      <p className="text-[#30291F] dark:text-[#F6EFE6] font-semibold text-sm">Drag and drop your PDF resume here</p>
+                      <p className="text-[#74685C] dark:text-[#A89A8A] text-xs mt-1">
+                        or <span className="text-[#B85C38] dark:text-[#D9734E] font-bold underline underline-offset-2">browse files</span>
                       </p>
-                      <p className="text-slate-400 text-xs mt-2">PDF only · Max 5 MB · AI skill extraction</p>
+                      <p className="text-[#9A8D7E] text-[11px] mt-1.5">PDF only • Maximum 5 MB</p>
                     </div>
                   </>
                 )}
@@ -953,8 +959,8 @@ export default function StudentDashboard() {
             {/* Parsed skills summary */}
             {profile?.parsedSkills && profile.parsedSkills.length > 0 && (
               <div className="enterprise-card p-5 animate-view-enter stagger-3">
-                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-                  <Zap size={13} className="text-indigo-400" />AI-Parsed Skills ({profile.parsedSkills.length} found)
+                <h2 className="text-xs font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                  <Zap size={13} className="text-[#B85C38] dark:text-[#D9734E]" />Extracted Skills ({profile.parsedSkills.length} verified)
                 </h2>
                 <div className="flex flex-wrap gap-1.5">
                   {profile.parsedSkills.map(skill => (
@@ -965,13 +971,13 @@ export default function StudentDashboard() {
             )}
 
             {/* Tip */}
-            <div className="enterprise-card p-4 border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-950/20 animate-view-enter stagger-4">
+            <div className="enterprise-card p-4 border-[#F7DCB5] dark:border-[rgba(228,157,70,0.35)] bg-[#FEF6EB] dark:bg-[rgba(181,115,36,0.22)] animate-view-enter stagger-4">
               <div className="flex items-start gap-3">
-                <AlertCircle size={16} className="text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                <AlertCircle size={16} className="text-[#B57324] dark:text-[#E49D46] mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-bold text-amber-900 dark:text-amber-300">For best results</p>
-                  <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5 leading-relaxed">
-                    Use a text-based PDF (not a scanned image). Include a clear skills section listing tools, languages, and frameworks. Avoid tables in skill sections — plain text extracts most accurately.
+                  <p className="text-xs font-bold text-[#B57324] dark:text-[#E49D46]">Resume Parsing Tip</p>
+                  <p className="text-xs text-[#B57324] dark:text-[#E49D46] mt-0.5 leading-relaxed">
+                    Use a text-based PDF rather than an image scan. Clearly label your technical skills (Languages, Frameworks, Developer Tools) to maximize automated Jaccard matching accuracy.
                   </p>
                 </div>
               </div>
@@ -983,15 +989,15 @@ export default function StudentDashboard() {
         {activeView === 'analysis' && (
           <div className="space-y-5 animate-view-enter">
             <div className="section-header">
-              <h1 className="text-2xl font-black text-slate-900 dark:text-white">Detailed Candidate Analysis</h1>
-              <p className="text-slate-500 dark:text-slate-400 mt-0.5 text-sm">In-depth profile breakdown — your competitive positioning</p>
+              <h1 className="text-2xl font-black text-[#30291F] dark:text-[#F6EFE6]">Candidate Match Analysis</h1>
+              <p className="text-[#74685C] dark:text-[#B0A294] mt-0.5 text-sm">In-depth multi-dimensional profile positioning against current market demand</p>
             </div>
 
             {!profile || !analysisData ? (
               <div className="enterprise-card p-12 text-center">
-                <BarChart2 size={36} className="text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-                <p className="font-semibold text-slate-700 dark:text-slate-200">Upload resume to unlock analysis</p>
-                <p className="text-slate-400 text-sm mt-1">We need your profile data to generate this report</p>
+                <BarChart2 size={36} className="text-[#74685C] dark:text-[#A89A8A] mx-auto mb-3" />
+                <p className="font-bold text-[#30291F] dark:text-[#F6EFE6]">Upload your resume to view analysis</p>
+                <p className="text-[#74685C] dark:text-[#A89A8A] text-xs mt-1">Profile data is required to compute multi-dimensional readiness</p>
                 <button onClick={() => { setActiveView('documents'); fileRef.current?.click(); }} className="btn-primary mt-4">Upload Resume</button>
               </div>
             ) : (
@@ -1002,17 +1008,17 @@ export default function StudentDashboard() {
                   {/* Overall score card */}
                   <div className="enterprise-card p-6 flex flex-col items-center text-center gap-4 animate-view-enter stagger-1">
                     <div className="relative">
-                      <CircularProgress score={analysisData.overallScore} size={110} stroke={9} />
+                      <CircularProgress score={analysisData.overallScore} size={96} stroke={8} />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Overall AI Score</p>
-                      <p className={cn('text-base font-black mt-1',
-                        analysisData.overallScore >= 75 ? 'text-emerald-700 dark:text-emerald-400'
-                        : analysisData.overallScore >= 55 ? 'text-amber-700 dark:text-amber-400' : 'text-red-600 dark:text-red-400')}>
-                        {analysisData.overallScore >= 75 ? 'Excellent' : analysisData.overallScore >= 55 ? 'Good' : analysisData.overallScore >= 35 ? 'Developing' : 'Early Stage'}
+                      <p className="text-[11px] font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider">Overall AI Score</p>
+                      <p className={cn('text-base font-bold mt-0.5',
+                        analysisData.overallScore >= 75 ? 'text-[#2D7A58] dark:text-[#52B788]'
+                        : analysisData.overallScore >= 55 ? 'text-[#B85C38] dark:text-[#D9734E]' : 'text-[#C24134] dark:text-[#F07167]')}>
+                        {analysisData.overallScore >= 75 ? 'Strong Fit' : analysisData.overallScore >= 55 ? 'Good Alignment' : 'Developing'}
                       </p>
                     </div>
-                    <div className="w-full text-left space-y-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <div className="w-full text-left space-y-2 pt-3 border-t border-[#E9DFD1] dark:border-[#382E25]">
                       {[
                         { label: 'Skills Match',  value: analysisData.skillMatchPct },
                         { label: 'CGPA Score',    value: analysisData.cgpaPct },
@@ -1020,11 +1026,11 @@ export default function StudentDashboard() {
                       ].map(({ label, value }) => (
                         <div key={label}>
                           <div className="flex justify-between text-xs mb-0.5">
-                            <span className="text-slate-500 dark:text-slate-400 font-medium">{label}</span>
-                            <span className="font-bold text-indigo-600 dark:text-indigo-400">{value}%</span>
+                            <span className="text-[#74685C] dark:text-[#A89A8A] font-medium">{label}</span>
+                            <span className="font-bold text-[#B85C38] dark:text-[#D9734E]">{value}%</span>
                           </div>
-                          <div className="h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full skill-bar-fill" style={{ width: `${value}%` }} />
+                          <div className="h-1 bg-[#FAF6EF] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] rounded-full overflow-hidden">
+                            <div className="h-full bg-[#B85C38] dark:bg-[#D9734E] rounded-full skill-bar-fill" style={{ width: `${value}%` }} />
                           </div>
                         </div>
                       ))}
@@ -1033,31 +1039,31 @@ export default function StudentDashboard() {
 
                   {/* Radar chart */}
                   <div className="enterprise-card p-6 flex flex-col items-center gap-4 animate-view-enter stagger-2">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest self-start">Skill Radar</p>
-                    <RadarChart size={190} values={[
+                    <p className="text-[11px] font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider self-start">Readiness Radar</p>
+                    <RadarChart size={180} values={[
                       { label: 'Skills',      value: analysisData.skillMatchPct },
                       { label: 'CGPA',        value: analysisData.cgpaPct },
                       { label: 'Experience',  value: analysisData.expPct },
                       { label: 'Applications',value: Math.min(100, analysisData.appliedCount * 20) },
                     ]} />
-                    <p className="text-[10px] text-slate-400 text-center leading-relaxed">
-                      Radar shows your strength across 4 dimensions relative to job requirements
+                    <p className="text-[11px] text-[#74685C] dark:text-[#A89A8A] text-center leading-relaxed">
+                      Evaluated across 4 dimensions relative to active startup requirements
                     </p>
                   </div>
 
                   {/* Quick stats */}
                   <div className="flex flex-col gap-3 animate-view-enter stagger-3">
                     {[
-                      { label: 'Top Match Score',   value: `${analysisData.topScore}%`, icon: <Trophy size={16} className="text-indigo-600" />,   bg: 'bg-indigo-50' },
-                      { label: 'Jobs Applied',       value: analysisData.appliedCount,   icon: <CheckCircle size={16} className="text-emerald-600" />, bg: 'bg-emerald-50' },
-                      { label: 'Skills Parsed',      value: profile.parsedSkills.length,  icon: <Zap size={16} className="text-violet-600" />,       bg: 'bg-violet-50' },
-                      { label: 'Skills to Build',    value: skillDevData.missing.length,   icon: <Target size={16} className="text-amber-600" />,      bg: 'bg-amber-50' },
+                      { label: 'Top Match Score',   value: `${analysisData.topScore}%`, icon: <Trophy size={16} className="text-[#B85C38] dark:text-[#D9734E]" />,   bg: 'bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)]' },
+                      { label: 'Jobs Applied',       value: analysisData.appliedCount,   icon: <CheckCircle size={16} className="text-[#2D7A58] dark:text-[#52B788]" />, bg: 'bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)]' },
+                      { label: 'Skills Parsed',      value: profile.parsedSkills.length,  icon: <Zap size={16} className="text-[#B57324] dark:text-[#E49D46]" />,       bg: 'bg-[#FEF6EB] dark:bg-[rgba(181,115,36,0.22)]' },
+                      { label: 'Skills to Build',    value: skillDevData.missing.length,   icon: <Target size={16} className="text-[#C24134] dark:text-[#F07167]" />,      bg: 'bg-[#FDEEED] dark:bg-[rgba(194,65,52,0.22)]' },
                     ].map(({ label, value, icon, bg }) => (
-                      <div key={label} className="enterprise-card p-4 flex items-center gap-4">
-                        <div className={cn('p-2.5 rounded-xl flex-shrink-0', bg)}>{icon}</div>
+                      <div key={label} className="enterprise-card p-3.5 flex items-center gap-3">
+                        <div className={cn('p-2.5 rounded-lg flex-shrink-0', bg)}>{icon}</div>
                         <div>
-                          <p className="text-xl font-black text-slate-900 dark:text-white">{value}</p>
-                          <p className="text-xs text-slate-400 font-medium">{label}</p>
+                          <p className="text-lg font-bold text-[#30291F] dark:text-[#F6EFE6]">{value}</p>
+                          <p className="text-xs text-[#74685C] dark:text-[#A89A8A] font-medium">{label}</p>
                         </div>
                       </div>
                     ))}
@@ -1065,79 +1071,38 @@ export default function StudentDashboard() {
                 </div>
 
                 {/* Recommendation banner */}
-                <div className={cn('enterprise-card p-5 flex items-start gap-4 animate-view-enter stagger-4',
-                  analysisData.overallScore >= 75 ? 'border-emerald-200 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-950/20'
-                  : analysisData.overallScore >= 55 ? 'border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-950/20'
-                  : 'border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-950/20')}>
-                  <div className={cn('p-2.5 rounded-xl flex-shrink-0',
-                    analysisData.overallScore >= 75 ? 'bg-emerald-100 dark:bg-emerald-900/60' : analysisData.overallScore >= 55 ? 'bg-amber-100 dark:bg-amber-900/60' : 'bg-red-100 dark:bg-red-900/60')}>
-                    <Star size={18} className={analysisData.overallScore >= 75 ? 'text-emerald-600 dark:text-emerald-400' : analysisData.overallScore >= 55 ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400'} />
+                <div className={cn('enterprise-card p-5 flex items-start gap-3.5 animate-view-enter stagger-4',
+                  analysisData.overallScore >= 75 ? 'border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)] bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)]'
+                  : analysisData.overallScore >= 55 ? 'border-[#F7DCB5] dark:border-[rgba(228,157,70,0.35)] bg-[#FEF6EB] dark:bg-[rgba(181,115,36,0.22)]'
+                  : 'border-[#F6BDB7] dark:border-[rgba(240,113,103,0.35)] bg-[#FDEEED] dark:bg-[rgba(194,65,52,0.22)]')}>
+                  <div className={cn('p-2 rounded-lg flex-shrink-0',
+                    analysisData.overallScore >= 75 ? 'bg-white dark:bg-[#221C16]' : analysisData.overallScore >= 55 ? 'bg-white dark:bg-[#221C16]' : 'bg-white dark:bg-[#221C16]')}>
+                    <Star size={18} className={analysisData.overallScore >= 75 ? 'text-[#2D7A58] dark:text-[#52B788]' : analysisData.overallScore >= 55 ? 'text-[#B57324] dark:text-[#E49D46]' : 'text-[#C24134] dark:text-[#F07167]'} />
                   </div>
                   <div>
-                    <p className="font-bold text-slate-900 dark:text-white text-sm">Overall Recommendation</p>
-                    <p className="text-sm text-slate-700 dark:text-slate-300 mt-1 leading-relaxed">{analysisData.recommendation}</p>
+                    <p className="font-bold text-[#30291F] dark:text-[#F6EFE6] text-sm">Personalized Strategic Recommendation</p>
+                    <p className="text-xs text-[#544A3E] dark:text-[#D8CEBF] mt-1 leading-relaxed">{analysisData.recommendation}</p>
                   </div>
                 </div>
 
-                {/* Applied jobs timeline */}
-                {analysisData.appliedJobs.length > 0 && (
-                  <div className="enterprise-card p-6 animate-view-enter stagger-5">
-                    <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-1.5">
-                      <Clock size={13} className="text-indigo-400" />Application Timeline
-                    </h2>
-                    <div className="relative pl-5">
-                      {/* Vertical line */}
-                      <div className="absolute left-1.5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-indigo-300 dark:from-indigo-600 to-slate-200 dark:to-slate-800 rounded-full" />
-                      <div className="space-y-5">
-                        {analysisData.appliedJobs.map(({ job, matchScore }, i) => (
-                          <div key={job.id} className={cn('relative flex items-start gap-4 animate-view-enter', `stagger-${Math.min(i + 1, 6)}`)}>
-                            {/* Timeline dot */}
-                            <div className="absolute -left-[18px] top-1.5 w-3 h-3 rounded-full bg-indigo-500 border-2 border-white dark:border-slate-900 shadow-sm timeline-dot" />
-                            <div className="flex-1 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl p-4 hover:border-indigo-200 dark:hover:border-indigo-500/40 hover:shadow-card transition-all duration-200">
-                              <div className="flex items-start justify-between gap-3">
-                                <div>
-                                  <p className="font-bold text-slate-900 dark:text-white text-sm">{job.title}</p>
-                                  {job.recruiter?.recruiterProfile && (
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
-                                      <Building2 size={10} />{job.recruiter.recruiterProfile.companyName}
-                                    </p>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2 flex-shrink-0">
-                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/50">
-                                    {matchScore}% match
-                                  </span>
-                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
-                                    Applied ✓
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Skill comparison table */}
+                {/* Skill comparison */}
                 <div className="enterprise-card p-6 animate-view-enter stagger-6">
-                  <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-1.5">
-                    <BarChart2 size={13} className="text-indigo-400" />Skills Comparison — Your Profile vs. Job Requirements
+                  <h2 className="text-xs font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-5 flex items-center gap-1.5">
+                    <BarChart2 size={13} className="text-[#B85C38] dark:text-[#D9734E]" />Skills Alignment vs. Active Job Postings
                   </h2>
                   {matches.slice(0, 3).map(({ job, matchScore }) => {
                     const { matched, missing } = analyzeSkillGap(job.requiredSkills, profile.parsedSkills);
                     return (
-                      <div key={job.id} className="mb-5 last:mb-0 pb-5 last:pb-0 border-b last:border-0 border-slate-100 dark:border-slate-800">
-                        <div className="flex items-center justify-between mb-3">
-                          <p className="font-bold text-slate-800 dark:text-slate-100 text-sm">{job.title}</p>
-                          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{matchScore}% match</span>
+                      <div key={job.id} className="mb-4 last:mb-0 pb-4 last:pb-0 border-b last:border-0 border-[#E9DFD1] dark:border-[#382E25]">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="font-bold text-[#30291F] dark:text-[#F6EFE6] text-sm">{job.title}</p>
+                          <span className="text-xs font-bold text-[#B85C38] dark:text-[#D9734E]">{matchScore}% match</span>
                         </div>
-                        <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-2">
-                          <div className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full skill-bar-fill"
+                        <div className="h-1.5 bg-[#FAF6EF] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] rounded-full overflow-hidden mb-1.5">
+                          <div className="h-full bg-[#B85C38] dark:bg-[#D9734E] rounded-full skill-bar-fill"
                             style={{ width: `${Math.round((matched.length / Math.max(job.requiredSkills.length, 1)) * 100)}%` }} />
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">{matched.length}/{job.requiredSkills.length} skills matched · {missing.length} to build</p>
+                        <p className="text-[11px] text-[#74685C] dark:text-[#A89A8A]">{matched.length}/{job.requiredSkills.length} skills covered · {missing.length} missing</p>
                       </div>
                     );
                   })}
@@ -1189,27 +1154,32 @@ function JobMatchList({
   showAll?: boolean;
 }) {
   if (loadingMatches) return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="border border-slate-200 rounded-xl p-5">
-          <div className="skeleton h-4 w-1/2 mb-3" /><div className="skeleton h-3 w-1/3" />
+        <div key={i} className="wellfound-card p-5">
+          <div className="skeleton h-4 w-1/3 mb-2.5" />
+          <div className="skeleton h-5 w-1/2 mb-3" />
+          <div className="skeleton h-3 w-3/4 mb-3" />
+          <div className="skeleton h-7 w-28" />
         </div>
       ))}
     </div>
   );
 
   if (matches.length === 0) return (
-    <div className="text-center py-16">
-      <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Briefcase size={28} className="text-slate-400" />
+    <div className="wellfound-card text-center py-14 px-4">
+      <div className="w-14 h-14 bg-[#FAF6EF] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] rounded-full flex items-center justify-center mx-auto mb-3">
+        <Briefcase size={24} className="text-[#74685C] dark:text-[#A89A8A]" />
       </div>
-      <p className="font-semibold text-slate-700 text-base">No matches found</p>
-      <p className="text-slate-400 text-sm mt-1">{!profile ? 'Upload your resume to start matching' : 'Try a different filter'}</p>
+      <p className="font-bold text-[#30291F] dark:text-[#F6EFE6] text-base">No matching positions found</p>
+      <p className="text-[#74685C] dark:text-[#A89A8A] text-xs mt-1 max-w-sm mx-auto">
+        {!profile ? 'Upload your resume so our AI can match your skills against active roles' : 'Try switching the filter to "All Roles"'}
+      </p>
     </div>
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3.5">
       {(showAll ? matches : matches).map((jobMatch, idx) => {
         const { matchScore, job, applicationStatus, conversationId } = jobMatch;
         const { matched, missing } = analyzeSkillGap(job.requiredSkills, profile?.parsedSkills ?? []);
@@ -1217,117 +1187,128 @@ function JobMatchList({
         const canApply  = matchScore >= 50 && !isApplied;
 
         return (
-          <div key={job.id} className={cn('job-card flex flex-col gap-4 animate-view-enter', idx < 6 && `stagger-${Math.min(idx + 1, 6)}`)}>
-            <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-              {/* Score */}
-              <div className="flex-shrink-0 flex flex-col items-center gap-1">
-                <CircularProgress score={matchScore} size={72} stroke={7} />
-                <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full',
-                  matchScore >= 80 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : matchScore >= 50 ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                  : 'bg-red-50 text-red-700 border border-red-200')}>
-                  {matchScore >= 80 ? 'Excellent' : matchScore >= 50 ? 'Good Fit' : 'Low Match'}
-                </span>
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-black text-slate-900 dark:text-white text-base leading-snug mb-0.5">{job.title}</h3>
-                {job.recruiter?.recruiterProfile && (
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-2 flex items-center gap-1.5">
-                    <Building2 size={12} className="text-slate-400 dark:text-slate-500" />
-                    <span className="font-semibold text-slate-700 dark:text-slate-200">{job.recruiter.recruiterProfile.companyName}</span>
-                    <span className="text-slate-300 dark:text-slate-600">·</span>
-                    <span>{job.recruiter.recruiterProfile.designation}</span>
-                  </p>
-                )}
-                {job.description && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-2 line-clamp-2">
-                    {job.description.slice(0, 120)}{job.description.length > 120 ? '…' : ''}
-                  </p>
-                )}
-                <div className="flex flex-wrap gap-2 items-center">
-                  <span className="text-xs bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 rounded-lg px-2.5 py-1 font-medium text-slate-600 dark:text-slate-300">
-                    Min CGPA: <span className="font-bold text-slate-800 dark:text-slate-100">{job.minCgpa}</span>
-                  </span>
-                  <span className="text-xs bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 rounded-lg px-2.5 py-1 font-medium text-slate-600 dark:text-slate-300">
-                    Exp: <span className="font-bold text-slate-800 dark:text-slate-100">{job.minExperience} yrs</span>
-                  </span>
-                  <button onClick={() => onViewDetails(jobMatch)}
-                    className="flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline underline-offset-2 transition-colors">
-                    <BookOpen size={11} />View Full Details
-                  </button>
+          <div
+            key={job.id}
+            className={cn('wellfound-card p-5 flex flex-col gap-3 animate-view-enter', idx < 6 && `stagger-${Math.min(idx + 1, 6)}`)}
+          >
+            {/* ── Top Header: Company Identity & Match Score ── */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-lg bg-[#FAF6EF] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] flex items-center justify-center font-bold text-base text-[#B85C38] dark:text-[#D9734E] flex-shrink-0">
+                  {job.recruiter?.recruiterProfile?.companyName?.[0]?.toUpperCase() ?? 'Z'}
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs font-bold text-[#30291F] dark:text-[#F6EFE6] truncate">
+                      {job.recruiter?.recruiterProfile?.companyName ?? 'Startup Partner'}
+                    </span>
+                    {job.recruiter?.recruiterProfile?.designation && (
+                      <>
+                        <span className="text-[#D8CBBA] dark:text-[#4A3D32]">•</span>
+                        <span className="text-[11px] text-[#74685C] dark:text-[#A89A8A] truncate">{job.recruiter.recruiterProfile.designation}</span>
+                      </>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-[#74685C] dark:text-[#A89A8A]">Active Hiring • University Network</p>
                 </div>
               </div>
 
-              {/* Actions: Apply / Chat */}
-              <div className="flex flex-col sm:flex-row items-center gap-2">
+              {/* Match Score */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <CircularProgress score={matchScore} size={44} stroke={4.5} />
+              </div>
+            </div>
+
+            {/* ── Role Title ── */}
+            <div>
+              <button
+                type="button"
+                onClick={() => onViewDetails(jobMatch)}
+                className="text-base font-bold text-[#30291F] dark:text-[#F6EFE6] hover:text-[#B85C38] dark:hover:text-[#D9734E] text-left transition-colors cursor-pointer"
+              >
+                {job.title}
+              </button>
+            </div>
+
+            {/* ── Metadata Tags ── */}
+            <div className="flex flex-wrap gap-1.5 items-center">
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-[#FAF6EF] dark:bg-[#2C241D] text-[#544A3E] dark:text-[#D8CEBF] border border-[#E9DFD1] dark:border-[#382E25] rounded-md px-2.5 py-0.5">
+                🎓 Min CGPA: <strong className="text-[#30291F] dark:text-[#F6EFE6]">{job.minCgpa}</strong>
+              </span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-[#FAF6EF] dark:bg-[#2C241D] text-[#544A3E] dark:text-[#D8CEBF] border border-[#E9DFD1] dark:border-[#382E25] rounded-md px-2.5 py-0.5">
+                💼 Exp: <strong className="text-[#30291F] dark:text-[#F6EFE6]">{job.minExperience} yrs</strong>
+              </span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-[#FAF6EF] dark:bg-[#2C241D] text-[#544A3E] dark:text-[#D8CEBF] border border-[#E9DFD1] dark:border-[#382E25] rounded-md px-2.5 py-0.5">
+                📍 Campus Placement
+              </span>
+              {isApplied && (
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)] text-[#2D7A58] dark:text-[#52B788] border border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)] rounded-md px-2.5 py-0.5">
+                  ✓ Applied
+                </span>
+              )}
+            </div>
+
+            {/* ── Description Preview ── */}
+            {job.description && (
+              <p className="text-xs text-[#74685C] dark:text-[#B0A294] leading-relaxed line-clamp-2">
+                {job.description}
+              </p>
+            )}
+
+            {/* ── Skill Gap Chips ── */}
+            <div className="flex flex-wrap gap-1 items-center pt-1">
+              {matched.slice(0, 5).map(s => <span key={s} className="skill-matched">✓ {s}</span>)}
+              {missing.slice(0, 3).map(s  => <span key={s} className="skill-missing">✗ {s}</span>)}
+              {(matched.length + missing.length > 8) && (
+                <span className="text-[11px] text-[#74685C] dark:text-[#A89A8A] font-medium self-center pl-1">
+                  +{matched.length + missing.length - 8} more
+                </span>
+              )}
+            </div>
+
+            {/* ── Footer Actions ── */}
+            <div className="pt-3 border-t border-[#E9DFD1] dark:border-[#382E25] flex flex-col sm:flex-row items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => onViewDetails(jobMatch)}
+                className="text-xs text-[#74685C] dark:text-[#A89A8A] hover:text-[#B85C38] dark:hover:text-[#D9734E] font-semibold transition-colors flex items-center gap-1 cursor-pointer self-start sm:self-auto"
+              >
+                <BookOpen size={13} />
+                View Full Details
+              </button>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                 {isApplied && applicationStatus === 'SHORTLISTED' && onOpenChat && (
                   <button
                     type="button"
                     onClick={() => onOpenChat(conversationId ?? undefined)}
-                    className="flex-shrink-0 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-md shadow-indigo-600/30 transition-all duration-150 animate-pulse"
-                    title="Live 1-on-1 Chat with Recruiter"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)] text-[#2D7A58] dark:text-[#52B788] border border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)] hover:bg-[#D4EDDF] transition-colors cursor-pointer"
                   >
                     <MessageSquare size={13} />
                     Chat with Recruiter
                   </button>
                 )}
-                <button onClick={() => void onApply(job.id, job.title)}
+
+                <button
+                  type="button"
+                  onClick={() => void onApply(job.id, job.title)}
                   disabled={applying === job.id || !canApply}
-                  className={cn('flex-shrink-0 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-150 w-full sm:w-auto',
-                    isApplied ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 cursor-not-allowed'
-                    : canApply ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm active:scale-[0.97]'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700',
-                    applying === job.id && 'opacity-70')}>
-                  {applying === job.id ? <Loader2 size={14} className="animate-spin" /> : isApplied ? <CheckCircle size={14} /> : <ChevronRight size={14} />}
+                  className={cn(
+                    'text-xs font-semibold px-4 py-2 rounded-lg transition-all duration-150 flex items-center gap-1.5 cursor-pointer w-full sm:w-auto justify-center',
+                    isApplied
+                      ? 'bg-[#F3EBDD] dark:bg-[#2C241D] text-[#74685C] dark:text-[#D8CEBF] border border-[#E9DFD1] dark:border-[#382E25] cursor-not-allowed'
+                      : canApply
+                      ? 'btn-primary'
+                      : 'bg-[#F3EBDD] dark:bg-[#2C241D] text-[#9A8D7E] border border-[#E9DFD1] dark:border-[#382E25] cursor-not-allowed',
+                    applying === job.id && 'opacity-70'
+                  )}
+                >
+                  {applying === job.id ? <Loader2 size={13} className="animate-spin" /> : isApplied ? <CheckCircle size={13} /> : null}
                   {isApplied
                     ? (applicationStatus === 'SHORTLISTED' ? 'Shortlisted 🎉' : applicationStatus === 'REJECTED' ? 'Reviewed' : 'Applied')
-                    : matchScore >= 50 ? 'Apply Now' : 'Below Threshold'}
+                    : matchScore >= 50 ? 'Quick Apply' : 'Below 50% Threshold'}
                 </button>
               </div>
-            </div>
-
-            {/* Skill gap */}
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
-              <div className="flex flex-wrap gap-1.5 mb-2">
-                {matched.map(s => <span key={s} className="skill-matched">✓ {s}</span>)}
-                {missing.map(s  => <span key={s} className="skill-missing">✗ {s}</span>)}
-              </div>
-              {missing.length === 0 && matched.length > 0 ? (
-                <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800/50 rounded-xl p-3 flex items-center gap-2">
-                  <CheckCircle size={13} className="text-emerald-600 flex-shrink-0" />
-                  <p className="text-xs font-bold text-emerald-800 dark:text-emerald-300">Perfect Match — all {matched.length} skills covered!</p>
-                </div>
-              ) : missing.length > 0 ? (
-                <div className={cn('rounded-xl p-4 space-y-2 border',
-                  missing.length <= 2 ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-800/50' : missing.length <= 5 ? 'bg-orange-50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-800/50' : 'bg-red-50 dark:bg-red-950/20 border-red-100 dark:border-red-800/50')}>
-                  <div className="flex items-center gap-2">
-                    <Info size={13} className={missing.length <= 2 ? 'text-amber-600' : missing.length <= 5 ? 'text-orange-600' : 'text-red-500'} />
-                    <p className={cn('text-xs font-bold uppercase tracking-wide', missing.length <= 2 ? 'text-amber-800 dark:text-amber-300' : missing.length <= 5 ? 'text-orange-800 dark:text-orange-300' : 'text-red-800 dark:text-red-300')}>
-                      {matched.length}/{matched.length + missing.length} matched · {missing.length} to build
-                    </p>
-                  </div>
-                  <div className="space-y-1.5">
-                    {missing.slice(0, 3).map(skill => (
-                      <div key={skill} className="flex items-start gap-2 bg-white/70 dark:bg-slate-900/60 rounded-lg p-2 border border-slate-200/50 dark:border-slate-800/80">
-                        <span className={cn('w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0', missing.length <= 2 ? 'bg-amber-400' : missing.length <= 5 ? 'bg-orange-400' : 'bg-red-400')} />
-                        <div className="min-w-0">
-                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 capitalize">{skill}</span>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                            {SKILL_ADVICE[skill.toLowerCase()] ?? `Build a project demonstrating ${skill}.`}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {missing.length > 3 && (
-                    <p className={cn('text-xs font-medium pl-3', missing.length <= 5 ? 'text-orange-700 dark:text-orange-400' : 'text-red-700 dark:text-red-400')}>
-                      +{missing.length - 3} more — focus on above first.
-                    </p>
-                  )}
-                </div>
-              ) : null}
             </div>
           </div>
         );
@@ -1337,7 +1318,7 @@ function JobMatchList({
 }
 
 // =============================================================================
-// JobDetailsModal (preserved exactly)
+// JobDetailsModal
 // =============================================================================
 function JobDetailsModal({
   match,
@@ -1371,67 +1352,138 @@ function JobDetailsModal({
 
   return (
     <div onClick={e => { if (e.target === e.currentTarget) onClose(); }}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[85vh] rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col animate-slide-up overflow-hidden">
-        <div className="flex items-start justify-between gap-4 p-6 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs animate-fade-in">
+      <div className="relative bg-white dark:bg-[#221C16] border border-[#E9DFD1] dark:border-[#382E25] w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[85vh] rounded-t-2xl sm:rounded-xl shadow-lg flex flex-col animate-slide-up overflow-hidden">
+        
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4 p-5 sm:p-6 border-b border-[#E9DFD1] dark:border-[#382E25] flex-shrink-0">
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-black text-slate-900 dark:text-white">{job.title}</h2>
-            {company && <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5"><Building2 size={13} className="text-slate-400" /><span className="font-semibold text-slate-700 dark:text-slate-200">{company}</span>{designation && <><span className="text-slate-300 dark:text-slate-600">·</span><span>{designation}</span></>}</p>}
+            <h2 className="text-xl font-bold text-[#30291F] dark:text-[#F6EFE6]">{job.title}</h2>
+            {company && (
+              <p className="text-xs text-[#74685C] dark:text-[#A89A8A] mt-1 flex items-center gap-1.5">
+                <Building2 size={13} className="text-[#B85C38] dark:text-[#D9734E]" />
+                <span className="font-semibold text-[#30291F] dark:text-[#F6EFE6]">{company}</span>
+                {designation && <><span className="text-[#D8CBBA] dark:text-[#4A3D32]">·</span><span>{designation}</span></>}
+              </p>
+            )}
           </div>
-          <div className="flex flex-col items-center gap-1 flex-shrink-0">
-            <CircularProgress score={matchScore} size={60} stroke={6} />
-            <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full', matchScore >= 80 ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : matchScore >= 50 ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800' : 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800')}>
-              {matchScore >= 80 ? 'Excellent' : matchScore >= 50 ? 'Good Fit' : 'Low Match'}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <CircularProgress score={matchScore} size={48} stroke={5} />
+            <button onClick={onClose} className="p-1.5 rounded-lg text-[#74685C] dark:text-[#A89A8A] hover:bg-[#F3EBDD] dark:hover:bg-[#2C241D] transition-colors cursor-pointer">
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
+          <div className="flex flex-wrap gap-2">
+            <span className="flex items-center gap-1.5 bg-[#FAF6EF] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] rounded-md px-3 py-1 text-xs font-semibold text-[#544A3E] dark:text-[#D8CEBF]">
+              <Award size={13} className="text-[#B85C38] dark:text-[#D9734E]" />
+              Min CGPA: <strong className="text-[#30291F] dark:text-[#F6EFE6] ml-0.5">{job.minCgpa}</strong>
+            </span>
+            <span className="flex items-center gap-1.5 bg-[#FAF6EF] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] rounded-md px-3 py-1 text-xs font-semibold text-[#544A3E] dark:text-[#D8CEBF]">
+              <Briefcase size={13} className="text-[#B85C38] dark:text-[#D9734E]" />
+              Min Exp: <strong className="text-[#30291F] dark:text-[#F6EFE6] ml-0.5">{job.minExperience} yrs</strong>
             </span>
           </div>
-          <button onClick={onClose} className="flex-shrink-0 p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"><X size={18} /></button>
-        </div>
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          <div className="flex flex-wrap gap-2">
-            <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300"><Award size={12} className="text-indigo-500 dark:text-indigo-400" />Min CGPA: <span className="text-indigo-700 dark:text-indigo-400 font-black ml-0.5">{job.minCgpa}</span></span>
-            <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300"><Briefcase size={12} className="text-indigo-500 dark:text-indigo-400" />Min Experience: <span className="text-indigo-700 dark:text-indigo-400 font-black ml-0.5">{job.minExperience} yrs</span></span>
-          </div>
-          <div><h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5"><FileText size={12} className="text-indigo-400" />Job Description</h3><p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{job.description}</p></div>
+
           <div>
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5"><Zap size={12} className="text-indigo-400" />Required Skills<span className="ml-auto text-[10px] font-bold text-slate-400 normal-case">{matched.length}/{job.requiredSkills.length} matched</span></h3>
+            <h3 className="text-xs font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <FileText size={13} className="text-[#B85C38] dark:text-[#D9734E]" />
+              Job Description
+            </h3>
+            <p className="text-sm text-[#30291F] dark:text-[#D8CEBF] leading-relaxed whitespace-pre-wrap">
+              {job.description}
+            </p>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider flex items-center gap-1.5">
+                <Zap size={13} className="text-[#B85C38] dark:text-[#D9734E]" />
+                Required Skills
+              </h3>
+              <span className="text-xs font-semibold text-[#74685C] dark:text-[#A89A8A]">
+                {matched.length}/{job.requiredSkills.length} matched
+              </span>
+            </div>
             <div className="flex flex-wrap gap-1.5">
               {job.requiredSkills.map(skill => {
                 const isMat = matched.map(s => s.toLowerCase()).includes(skill.toLowerCase());
-                return <span key={skill} className={cn('px-2.5 py-1 rounded-md text-xs font-semibold border', isMat ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' : 'bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800')}>{isMat ? '✓' : '✗'} {skill}</span>;
+                return (
+                  <span
+                    key={skill}
+                    className={cn(
+                      'px-2.5 py-1 rounded-md text-xs font-semibold border',
+                      isMat
+                        ? 'bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)] text-[#2D7A58] dark:text-[#52B788] border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)]'
+                        : 'bg-[#FDEEED] dark:bg-[rgba(194,65,52,0.22)] text-[#C24134] dark:text-[#F07167] border-[#F6BDB7] dark:border-[rgba(240,113,103,0.35)]'
+                    )}
+                  >
+                    {isMat ? '✓' : '✗'} {skill}
+                  </span>
+                );
               })}
             </div>
           </div>
+
           {missing.length > 0 && (
-            <div className={cn('rounded-xl p-4 space-y-3 border', missing.length <= 2 ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-100 dark:border-amber-900/50' : missing.length <= 5 ? 'bg-orange-50 dark:bg-orange-950/40 border-orange-100 dark:border-orange-900/50' : 'bg-red-50 dark:bg-red-950/40 border-red-100 dark:border-red-900/50')}>
-              <div className="flex items-center gap-2"><Info size={14} className={missing.length <= 2 ? 'text-amber-600 dark:text-amber-400' : missing.length <= 5 ? 'text-orange-600 dark:text-orange-400' : 'text-red-500 dark:text-red-400'} /><p className={cn('text-xs font-bold uppercase tracking-wide', missing.length <= 2 ? 'text-amber-800 dark:text-amber-300' : missing.length <= 5 ? 'text-orange-800 dark:text-orange-300' : 'text-red-800 dark:text-red-300')}>{missing.length} skill{missing.length !== 1 ? 's' : ''} to build</p></div>
-              <div className="space-y-2">{missing.map(skill => <div key={skill} className="flex items-start gap-2.5 bg-white/70 dark:bg-slate-800/80 rounded-lg p-2.5"><span className={cn('w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0', missing.length <= 2 ? 'bg-amber-400' : missing.length <= 5 ? 'bg-orange-400' : 'bg-red-400')} /><div><span className="text-xs font-bold text-slate-800 dark:text-slate-200 capitalize">{skill}</span><p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">{SKILL_ADVICE[skill.toLowerCase()] ?? `Build a hands-on project demonstrating ${skill}.`}</p></div></div>)}</div>
+            <div className="bg-[#FAF6EF] dark:bg-[#2C241D] border border-[#E9DFD1] dark:border-[#382E25] rounded-xl p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <Info size={14} className="text-[#B57324] dark:text-[#E49D46]" />
+                <p className="text-xs font-bold uppercase tracking-wider text-[#30291F] dark:text-[#F6EFE6]">
+                  {missing.length} skill{missing.length !== 1 ? 's' : ''} to build
+                </p>
+              </div>
+              <div className="space-y-1.5">
+                {missing.map(skill => (
+                  <div key={skill} className="bg-white dark:bg-[#221C16] border border-[#E9DFD1] dark:border-[#382E25] rounded-lg p-2.5">
+                    <span className="text-xs font-bold text-[#30291F] dark:text-[#F6EFE6] capitalize">{skill}</span>
+                    <p className="text-xs text-[#74685C] dark:text-[#B0A294] mt-0.5 leading-relaxed">
+                      {SKILL_ADVICE[skill.toLowerCase()] ?? `Build a hands-on project demonstrating ${skill}.`}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
-          {matched.length === job.requiredSkills.length && job.requiredSkills.length > 0 && (
-            <div className="bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100 dark:border-emerald-800/60 rounded-xl p-3 flex items-start gap-2.5"><CheckCircle size={15} className="text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" /><div><p className="text-sm font-bold text-emerald-800 dark:text-emerald-300">Perfect Skill Match! 🎉</p><p className="text-xs text-emerald-700 dark:text-emerald-400 mt-0.5">Your resume covers every required skill.</p></div></div>
-          )}
         </div>
-        <div className="flex-shrink-0 border-t border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 flex items-center gap-3">
+
+        {/* Footer Actions */}
+        <div className="flex-shrink-0 border-t border-[#E9DFD1] dark:border-[#382E25] p-4 sm:p-5 bg-[#FAF6EF] dark:bg-[#171411] flex items-center justify-end gap-2.5">
           {isApplied && applicationStatus === 'SHORTLISTED' && onOpenChat && (
             <button
               type="button"
               onClick={() => onOpenChat(conversationId ?? undefined)}
-              className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl text-sm font-bold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-md shadow-indigo-600/30 transition-all duration-150 animate-pulse cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)] text-[#2D7A58] dark:text-[#52B788] border border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)] hover:bg-[#D4EDDF] transition-colors cursor-pointer"
             >
-              <MessageSquare size={15} />
+              <MessageSquare size={14} />
               Chat with Recruiter
             </button>
           )}
-          <button onClick={() => void onApply(job.id, job.title)} disabled={applying === job.id || !canApply}
-            className={cn('flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-150 cursor-pointer',
-              isApplied ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 cursor-not-allowed'
-              : canApply ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm active:scale-[0.97]'
-              : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700',
-              applying === job.id && 'opacity-70 cursor-not-allowed')}>
-            {applying === job.id ? <Loader2 size={16} className="animate-spin" /> : isApplied ? <CheckCircle size={16} /> : <ChevronRight size={16} />}
-            {isApplied ? 'Already Applied' : matchScore >= 50 ? 'Apply Now' : 'Score Below Threshold (50%)'}
+          <button
+            onClick={() => void onApply(job.id, job.title)}
+            disabled={applying === job.id || !canApply}
+            className={cn(
+              'px-5 py-2 rounded-lg text-xs font-bold transition-all duration-150 flex items-center gap-1.5 cursor-pointer',
+              isApplied
+                ? 'bg-[#F3EBDD] dark:bg-[#2C241D] text-[#74685C] dark:text-[#D8CEBF] border border-[#E9DFD1] dark:border-[#382E25] cursor-not-allowed'
+                : canApply
+                ? 'btn-primary'
+                : 'bg-[#F3EBDD] dark:bg-[#2C241D] text-[#9A8D7E] border border-[#E9DFD1] dark:border-[#382E25] cursor-not-allowed',
+              applying === job.id && 'opacity-70'
+            )}
+          >
+            {applying === job.id ? <Loader2 size={13} className="animate-spin" /> : isApplied ? <CheckCircle size={13} /> : null}
+            {isApplied ? 'Already Applied' : matchScore >= 50 ? 'Apply Now' : 'Below 50% Threshold'}
           </button>
-          <button onClick={onClose} className="px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-semibold transition-colors cursor-pointer">Close</button>
+          <button
+            onClick={onClose}
+            className="btn-secondary text-xs !py-2 !px-4 cursor-pointer"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>

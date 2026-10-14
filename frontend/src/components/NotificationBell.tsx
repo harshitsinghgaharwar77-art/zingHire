@@ -173,7 +173,6 @@ export default function NotificationBell({ onOpenChat, className = '' }: Props) 
     // Otherwise navigate to destination URL if present
     if (notif.linkUrl) {
       let targetUrl = notif.linkUrl;
-      // Normalize legacy /recruiter/dashboard -> /recruiter and /student/dashboard -> /student
       targetUrl = targetUrl
         .replace(/^\/recruiter\/dashboard/, '/recruiter')
         .replace(/^\/student\/dashboard/, '/student')
@@ -217,28 +216,28 @@ export default function NotificationBell({ onOpenChat, className = '' }: Props) 
     switch (type) {
       case 'APPLICATION_SHORTLISTED':
         return {
-          icon: <Sparkles size={16} className="text-emerald-600 dark:text-emerald-400" />,
-          bg: 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200/80 dark:border-emerald-800/60',
+          icon: <Sparkles size={15} className="text-[#2D7A58] dark:text-[#52C58E]" />,
+          bg: 'bg-[#EAF5EF] dark:bg-[#142A1E] border-[#C3E6D3] dark:border-[#1E4D34]',
         };
       case 'APPLICATION_REJECTED':
         return {
-          icon: <XCircle size={16} className="text-rose-600 dark:text-rose-400" />,
-          bg: 'bg-rose-50 dark:bg-rose-950/60 border-rose-200/80 dark:border-rose-800/60',
+          icon: <XCircle size={15} className="text-[#B83E28] dark:text-[#E57361]" />,
+          bg: 'bg-[#FDF0ED] dark:bg-[#2D1612] border-[#F7CBC3] dark:border-[#4D221B]',
         };
       case 'NEW_APPLICATION_RECEIVED':
         return {
-          icon: <FileText size={16} className="text-indigo-600 dark:text-indigo-400" />,
-          bg: 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200/80 dark:border-indigo-800/60',
+          icon: <FileText size={15} className="text-warm-terracotta dark:text-warm-darkTerracotta" />,
+          bg: 'bg-warm-sandTint dark:bg-warm-darkElevated border-warm-border dark:border-warm-darkBorder',
         };
       case 'NEW_CHAT_MESSAGE':
         return {
-          icon: <MessageSquare size={16} className="text-sky-600 dark:text-sky-400" />,
-          bg: 'bg-sky-50 dark:bg-sky-950/60 border-sky-200/80 dark:border-sky-800/60',
+          icon: <MessageSquare size={15} className="text-warm-terracotta dark:text-warm-darkTerracotta" />,
+          bg: 'bg-warm-sandTint dark:bg-warm-darkElevated border-warm-border dark:border-warm-darkBorder',
         };
       default:
         return {
-          icon: <Bell size={16} className="text-amber-600 dark:text-amber-400" />,
-          bg: 'bg-amber-50 dark:bg-amber-950/60 border-amber-200/80 dark:border-amber-800/60',
+          icon: <Bell size={15} className="text-warm-charcoal dark:text-warm-darkCharcoal" />,
+          bg: 'bg-warm-sandTint dark:bg-warm-darkElevated border-warm-border dark:border-warm-darkBorder',
         };
     }
   };
@@ -259,46 +258,43 @@ export default function NotificationBell({ onOpenChat, className = '' }: Props) 
           setIsOpen(!isOpen);
           if (!isOpen) void fetchNotifications();
         }}
-        className="relative p-2.5 rounded-xl text-stone-600 dark:text-stone-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-stone-100 dark:hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+        className="relative p-2 rounded-lg border border-warm-border dark:border-warm-darkBorder text-warm-charcoal dark:text-warm-darkCharcoal hover:bg-warm-sandTint dark:hover:bg-warm-darkElevated transition-all duration-150 cursor-pointer"
         title="Notifications"
         aria-label="View notifications"
       >
-        <Bell size={19} className={unreadCount > 0 ? 'text-indigo-600 dark:text-indigo-400' : ''} />
+        <Bell size={16} className={unreadCount > 0 ? 'text-warm-terracotta dark:text-warm-darkTerracotta' : ''} />
         {unreadCount > 0 && (
-          <span className="absolute top-1.5 right-1.5 flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-gradient-to-r from-amber-500 to-rose-500 text-[10px] font-black text-white shadow-md shadow-rose-500/30">
+          <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-warm-terracotta text-[10px] font-bold text-white shadow-sm">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
-      {/* Popover Dropdown */}
+      {/* Wellfound Popover Dropdown */}
       {isOpen && (
         <div
-          className="absolute right-0 mt-2.5 w-[340px] sm:w-[420px] rounded-2xl bg-white dark:bg-[#161324] border border-stone-200/90 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.6)] z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 backdrop-blur-2xl"
+          className="absolute right-0 mt-2 w-[340px] sm:w-[400px] rounded-xl bg-white dark:bg-warm-darkCard border border-warm-border dark:border-warm-darkBorder shadow-lg z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
         >
           {/* Header */}
-          <div className="px-4 py-3.5 border-b border-stone-200/80 dark:border-white/10 bg-stone-50/70 dark:bg-white/[0.02] flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
-                <Bell size={16} />
+          <div className="px-4 py-3 border-b border-warm-border dark:border-warm-darkBorder bg-warm-sandTint/30 dark:bg-warm-darkElevated/30 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="p-1 rounded bg-warm-sandTint dark:bg-warm-darkElevated text-warm-terracotta dark:text-warm-darkTerracotta border border-warm-border dark:border-warm-darkBorder">
+                <Bell size={14} />
               </div>
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <h3
-                    className="font-bold text-slate-900 dark:text-white text-sm leading-tight"
+                    className="font-bold text-warm-charcoal dark:text-warm-darkCharcoal text-xs leading-tight"
                     style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}
                   >
                     Notifications
                   </h3>
                   {unreadCount > 0 && (
-                    <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-rose-500 text-white text-[10px] font-black shadow-xs">
+                    <span className="px-1.5 py-0.2 rounded-full bg-warm-terracotta text-white text-[9px] font-bold">
                       {unreadCount} new
                     </span>
                   )}
                 </div>
-                <p className="text-[10px] text-slate-500 dark:text-stone-400 font-medium mt-0.5">
-                  Activity updates & applicant alerts
-                </p>
               </div>
             </div>
 
@@ -306,69 +302,69 @@ export default function NotificationBell({ onOpenChat, className = '' }: Props) 
               <button
                 type="button"
                 onClick={handleMarkAllRead}
-                className="text-[11px] font-semibold text-slate-500 dark:text-stone-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1.5 px-2.5 py-1 rounded-lg hover:bg-stone-200/60 dark:hover:bg-white/5 transition-all cursor-pointer"
+                className="text-[11px] font-semibold text-warm-muted dark:text-warm-darkMuted hover:text-warm-charcoal dark:hover:text-warm-darkCharcoal flex items-center gap-1 px-2 py-0.5 rounded hover:bg-warm-sandTint/60 transition-all cursor-pointer"
                 title="Mark all notifications as read"
               >
-                <CheckCheck size={13} className="text-indigo-500" />
+                <CheckCheck size={12} className="text-warm-terracotta" />
                 Mark all read
               </button>
             )}
           </div>
 
           {/* Filter Bar */}
-          <div className="px-4 py-2.5 bg-stone-100/70 dark:bg-white/[0.03] border-b border-stone-200/80 dark:border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-1.5 p-0.5 rounded-xl bg-stone-200/60 dark:bg-white/5 border border-stone-200 dark:border-white/5">
+          <div className="px-4 py-2 bg-warm-sandTint/20 dark:bg-warm-darkElevated/20 border-b border-warm-border dark:border-warm-darkBorder flex items-center justify-between">
+            <div className="flex items-center gap-1 p-0.5 rounded-lg bg-warm-sandTint/60 dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder">
               <button
                 type="button"
                 onClick={() => setFilter('all')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 py-0.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                   filter === 'all'
-                    ? 'bg-white dark:bg-white/15 text-slate-900 dark:text-white shadow-xs'
-                    : 'text-stone-500 dark:text-stone-400 hover:text-slate-800 dark:hover:text-stone-200'
+                    ? 'bg-white dark:bg-warm-darkCard text-warm-charcoal dark:text-warm-darkCharcoal shadow-xs font-bold'
+                    : 'text-warm-muted dark:text-warm-darkMuted hover:text-warm-charcoal dark:hover:text-warm-darkCharcoal'
                 }`}
               >
-                All <span className="opacity-70 text-[11px]">({notifications.length})</span>
+                All <span className="opacity-70 text-[10px]">({notifications.length})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setFilter('unread')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 py-0.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                   filter === 'unread'
-                    ? 'bg-white dark:bg-white/15 text-indigo-600 dark:text-indigo-400 shadow-xs'
-                    : 'text-stone-500 dark:text-stone-400 hover:text-slate-800 dark:hover:text-stone-200'
+                    ? 'bg-white dark:bg-warm-darkCard text-warm-terracotta dark:text-warm-darkTerracotta shadow-xs font-bold'
+                    : 'text-warm-muted dark:text-warm-darkMuted hover:text-warm-charcoal dark:hover:text-warm-darkCharcoal'
                 }`}
               >
-                Unread <span className="opacity-70 text-[11px]">({unreadCount})</span>
+                Unread <span className="opacity-70 text-[10px]">({unreadCount})</span>
               </button>
             </div>
 
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold text-[#2D7A58] dark:text-[#52C58E]">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2D7A58] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2D7A58]"></span>
               </span>
-              <span>Live Sync</span>
+              <span>Live Mesh</span>
             </div>
           </div>
 
           {/* Notification List */}
-          <div className="max-h-[380px] overflow-y-auto divide-y divide-stone-100 dark:divide-white/5">
+          <div className="max-h-[360px] overflow-y-auto divide-y divide-warm-border dark:divide-warm-darkBorder">
             {loading && notifications.length === 0 ? (
-              <div className="py-14 text-center text-xs text-slate-500 dark:text-stone-400 flex flex-col items-center gap-2.5">
-                <span className="w-5 h-5 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" />
-                <span className="font-medium">Loading notifications…</span>
+              <div className="py-12 text-center text-xs text-warm-muted flex flex-col items-center gap-2">
+                <span className="w-4 h-4 border-2 border-warm-terracotta border-t-transparent rounded-full animate-spin" />
+                <span>Syncing notifications…</span>
               </div>
             ) : filteredNotifications.length === 0 ? (
-              <div className="py-12 text-center px-6">
-                <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-stone-100 dark:bg-white/5 border border-stone-200/80 dark:border-white/10 flex items-center justify-center text-stone-400 dark:text-stone-500">
-                  <Inbox size={22} />
+              <div className="py-10 text-center px-6">
+                <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-warm-sandTint dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder flex items-center justify-center text-warm-muted">
+                  <Inbox size={18} />
                 </div>
-                <p className="text-xs font-bold text-slate-800 dark:text-white">
+                <p className="text-xs font-bold text-warm-charcoal dark:text-warm-darkCharcoal">
                   {filter === 'unread' ? 'No unread notifications' : 'All caught up!'}
                 </p>
-                <p className="text-[11px] text-slate-500 dark:text-stone-400 mt-1 max-w-[260px] mx-auto leading-relaxed">
+                <p className="text-[11px] text-warm-muted dark:text-warm-darkMuted mt-0.5 max-w-[240px] mx-auto leading-relaxed">
                   {filter === 'unread'
-                    ? 'You have reviewed all your candidate alerts.'
+                    ? 'You have reviewed all your hiring alerts.'
                     : 'New applicants, shortlist updates, and chat messages will appear here.'}
                 </p>
               </div>
@@ -379,50 +375,50 @@ export default function NotificationBell({ onOpenChat, className = '' }: Props) 
                   <div
                     key={notif.id}
                     onClick={() => void handleNotificationClick(notif)}
-                    className={`p-3.5 sm:p-4 flex items-start gap-3.5 cursor-pointer transition-all group relative ${
+                    className={`p-3 flex items-start gap-3 cursor-pointer transition-all group relative ${
                       notif.isRead
-                        ? 'bg-transparent hover:bg-stone-50/90 dark:hover:bg-white/[0.03]'
-                        : 'bg-indigo-50/50 dark:bg-indigo-950/25 hover:bg-indigo-50/80 dark:hover:bg-indigo-950/40 border-l-3 border-indigo-600 dark:border-indigo-400'
+                        ? 'bg-transparent hover:bg-warm-sandTint/30 dark:hover:bg-warm-darkElevated/30'
+                        : 'bg-warm-sandTint/40 dark:bg-warm-darkElevated/40 hover:bg-warm-sandTint/60 border-l-2 border-warm-terracotta'
                     }`}
                   >
                     {/* Themed Icon */}
-                    <div className={`p-2.5 rounded-xl border flex-shrink-0 shadow-xs ${theme.bg}`}>
+                    <div className={`p-2 rounded-lg border flex-shrink-0 shadow-xs ${theme.bg}`}>
                       {theme.icon}
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline justify-between gap-2 mb-1">
+                      <div className="flex items-baseline justify-between gap-2 mb-0.5">
                         <p
                           className={`text-xs font-bold truncate ${
                             notif.isRead
-                              ? 'text-slate-700 dark:text-stone-300'
-                              : 'text-slate-900 dark:text-white'
+                              ? 'text-warm-charcoal dark:text-warm-darkCharcoal'
+                              : 'text-warm-charcoal dark:text-warm-darkCharcoal font-extrabold'
                           }`}
                         >
                           {notif.title}
                         </p>
-                        <span className="text-[10px] font-medium text-stone-400 dark:text-stone-500 flex-shrink-0">
+                        <span className="text-[10px] text-warm-muted flex-shrink-0">
                           {formatRelativeTime(notif.createdAt)}
                         </span>
                       </div>
 
-                      <p className="text-xs text-slate-600 dark:text-stone-300 leading-relaxed font-normal">
+                      <p className="text-xs text-warm-muted dark:text-warm-darkMuted leading-relaxed">
                         {notif.message}
                       </p>
 
                       {notif.linkUrl && (
-                        <div className="mt-2 flex items-center">
-                          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+                        <div className="mt-1.5 flex items-center">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-warm-terracotta dark:text-warm-darkTerracotta group-hover:underline">
                             {notif.linkUrl.includes('conversationId=') ? (
                               <>
-                                <MessageSquare size={12} />
+                                <MessageSquare size={11} />
                                 Open live chat
                               </>
                             ) : (
                               <>
                                 View details & applicants
-                                <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+                                <ArrowRight size={11} className="transition-transform group-hover:translate-x-0.5" />
                               </>
                             )}
                           </span>
@@ -430,21 +426,21 @@ export default function NotificationBell({ onOpenChat, className = '' }: Props) 
                       )}
                     </div>
 
-                    {/* Trailing actions: unread indicator + dismiss button */}
+                    {/* Trailing dismiss button */}
                     <div className="flex flex-col items-end justify-between self-stretch flex-shrink-0 pl-1">
                       {!notif.isRead ? (
-                        <span className="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400 ring-4 ring-indigo-500/20" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-warm-terracotta" />
                       ) : (
-                        <div className="w-2 h-2" />
+                        <div className="w-1.5 h-1.5" />
                       )}
                       <button
                         type="button"
                         onClick={(e) => void handleDeleteNotification(e, notif.id)}
-                        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/60 text-stone-400 hover:text-rose-600 transition-all ml-auto mt-auto cursor-pointer"
+                        className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-[#FDF0ED] dark:hover:bg-[#2D1612] text-warm-muted hover:text-[#B83E28] transition-all ml-auto mt-auto cursor-pointer"
                         title="Dismiss notification"
                         aria-label="Dismiss notification"
                       >
-                        <Trash2 size={13} />
+                        <Trash2 size={12} />
                       </button>
                     </div>
                   </div>

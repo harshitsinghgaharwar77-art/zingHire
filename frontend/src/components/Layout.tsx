@@ -54,41 +54,36 @@ export default function Layout() {
   };
 
   const roleMeta = isStudent
-    ? { label: 'Student',   icon: <GraduationCap size={13} />, cls: 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800' }
+    ? { label: 'Candidate', icon: <GraduationCap size={13} />, cls: 'bg-[#F3EBDD] text-[#544A3E] dark:bg-[#2C241D] dark:text-[#D8CEBF] border-[#E9DFD1] dark:border-[#382E25]' }
     : isRecruiter
-    ? { label: 'Recruiter', icon: <Briefcase size={13} />,     cls: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800' }
+    ? { label: 'Recruiter', icon: <Briefcase size={13} />,     cls: 'bg-[#EBF7F0] text-[#2D7A58] dark:bg-[rgba(45,122,88,0.22)] dark:text-[#52B788] border-[#BBE5CE] dark:border-[rgba(82,183,136,0.35)]' }
     : isAdmin
-    ? { label: 'Admin',     icon: <Shield size={13} />,        cls: 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800' }
+    ? { label: 'Admin',     icon: <Shield size={13} />,        cls: 'bg-[#FAEEE9] text-[#B85C38] dark:bg-[rgba(217,115,78,0.18)] dark:text-[#D9734E] border-[#EFC8B9] dark:border-[rgba(217,115,78,0.35)]' }
     : null;
 
   return (
-    <div className="w-full min-h-full flex flex-col transition-colors duration-300">
-      {/* ── Background blur orbs ────────────────────────────────────────── */}
-      <div className="bg-orb bg-orb-1" aria-hidden="true" />
-      <div className="bg-orb bg-orb-2" aria-hidden="true" />
-      <div className="bg-orb bg-orb-3" aria-hidden="true" />
-
+    <div className="w-full min-h-full flex flex-col bg-[#FAF6EF] dark:bg-[#171411] text-[#30291F] dark:text-[#F6EFE6] transition-colors duration-200">
       {/* ── Toast provider ─────────────────────────────────────────────────── */}
       <Toaster
         position="top-center"
         toastOptions={{
           duration: 4000,
           style: {
-            background:   theme === 'dark' ? '#1e293b' : '#ffffff',
-            color:        theme === 'dark' ? '#f8fafc' : '#0f172a',
-            border:       theme === 'dark' ? '1px solid #334155' : '1px solid #e2e8f0',
-            borderRadius: '12px',
+            background:   theme === 'dark' ? '#221C16' : '#FFFFFF',
+            color:        theme === 'dark' ? '#F6EFE6' : '#30291F',
+            border:       theme === 'dark' ? '1px solid #382E25' : '1px solid #E9DFD1',
+            borderRadius: '10px',
             fontSize:     '14px',
             fontWeight:   '500',
-            boxShadow:    theme === 'dark' ? '0 10px 30px rgba(0,0,0,0.5)' : '0 4px 12px rgba(0,0,0,0.08)',
+            boxShadow:    theme === 'dark' ? '0 8px 24px rgba(0,0,0,0.5)' : '0 4px 14px rgba(48,41,31,0.08)',
           },
-          success: { iconTheme: { primary: '#10b981', secondary: '#fff' } },
-          error:   { iconTheme: { primary: '#ef4444', secondary: '#fff' } },
+          success: { iconTheme: { primary: '#2D7A58', secondary: '#fff' } },
+          error:   { iconTheme: { primary: '#C24134', secondary: '#fff' } },
         }}
       />
 
-      {/* ── Top Navigation ─────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-2xl shadow-sm transition-colors duration-300">
+      {/* ── Top Navigation (Wellfound Style: Clean, high-contrast, warm border) ── */}
+      <header className="sticky top-0 z-50 w-full border-b border-[#E9DFD1] dark:border-[#382E25] bg-[#FAF6EF]/90 dark:bg-[#171411]/90 backdrop-blur-md transition-colors duration-200">
         <div className="max-w-7xl mx-auto w-full px-4 md:px-8 h-16 flex items-center justify-between">
 
           {/* Left: ZingHire brand */}
@@ -105,10 +100,10 @@ export default function Layout() {
                     key={link.to}
                     to={link.to}
                     className={cn(
-                      'flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150',
+                      'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-150',
                       location.pathname === link.to
-                        ? 'bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 font-semibold border border-violet-200/60 dark:border-violet-800/50'
-                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60',
+                        ? 'bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] text-[#B85C38] dark:text-[#D9734E] font-semibold border border-[#EFC8B9] dark:border-[rgba(217,115,78,0.32)]'
+                        : 'text-[#74685C] dark:text-[#A89A8A] hover:text-[#30291F] dark:hover:text-[#F6EFE6] hover:bg-[#F3EBDD] dark:hover:bg-[#2C241D]',
                     )}
                   >
                     {link.icon}
@@ -116,12 +111,12 @@ export default function Layout() {
                   </Link>
                 ))}
 
-                <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-1" />
+                <div className="h-4 w-px bg-[#E9DFD1] dark:bg-[#382E25] mx-1" />
 
                 {/* Role pill badge */}
                 {roleMeta && (
                   <span className={cn(
-                    'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border',
+                    'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border',
                     roleMeta.cls,
                   )}>
                     {roleMeta.icon}
@@ -129,17 +124,17 @@ export default function Layout() {
                   </span>
                 )}
 
-                <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-1" />
+                <div className="h-4 w-px bg-[#E9DFD1] dark:bg-[#382E25] mx-1" />
 
                 {/* Real-time Messages Action */}
                 <button
                   type="button"
                   onClick={() => openChat(null)}
-                  className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition-colors cursor-pointer"
+                  className="p-2 rounded-lg text-[#74685C] dark:text-[#A89A8A] hover:text-[#B85C38] dark:hover:text-[#D9734E] hover:bg-[#F3EBDD] dark:hover:bg-[#2C241D] transition-colors cursor-pointer"
                   title="Live 1-on-1 Messages"
                   aria-label="Open messages"
                 >
-                  <MessageSquare size={19} />
+                  <MessageSquare size={18} />
                 </button>
 
                 {/* Real-time In-App Notification Bell */}
@@ -148,23 +143,23 @@ export default function Layout() {
                 {/* Light / Dark Mode Toggle */}
                 <ThemeToggle />
 
-                <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-1" />
+                <div className="h-4 w-px bg-[#E9DFD1] dark:bg-[#382E25] mx-1" />
 
                 {/* Avatar Button */}
                 <button
                   onClick={() => setIsProfileOpen(true)}
-                  className="w-9 h-9 ml-1 rounded-full bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500 flex items-center justify-center shadow-sm hover:ring-2 hover:ring-violet-400 transition-all duration-150 cursor-pointer"
+                  className="w-8 h-8 ml-1 rounded-full bg-[#B85C38] dark:bg-[#D9734E] text-white flex items-center justify-center font-bold text-xs shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
                   aria-label="Open profile settings"
                 >
-                  <span className="text-white text-sm font-bold tracking-wide">
+                  <span>
                     {user?.email?.substring(0, 2).toUpperCase() || 'U'}
                   </span>
                 </button>
 
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium
-                             text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-all duration-150 ml-1 cursor-pointer"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium
+                             text-[#74685C] dark:text-[#A89A8A] hover:text-[#C24134] dark:hover:text-[#F07167] hover:bg-[#FDEEED] dark:hover:bg-[rgba(194,65,52,0.18)] transition-colors ml-1 cursor-pointer"
                 >
                   <LogOut size={15} />
                   Logout
@@ -177,18 +172,18 @@ export default function Layout() {
 
                 <Link
                   to="/auth"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium
-                             text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all duration-150"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium
+                             text-[#544A3E] dark:text-[#D8CEBF] hover:text-[#30291F] dark:hover:text-[#F6EFE6] hover:bg-[#F3EBDD] dark:hover:bg-[#2C241D] transition-colors"
                 >
                   <LogIn size={15} />
-                  Login
+                  Log in
                 </Link>
                 <Link
                   to="/auth"
-                  className="btn-primary text-sm !py-2 !px-4"
+                  className="btn-primary text-sm !py-1.5 !px-3.5"
                 >
                   <UserPlus size={15} />
-                  Get Started
+                  Sign up
                 </Link>
               </>
             )}
@@ -199,7 +194,7 @@ export default function Layout() {
             <ThemeToggle />
             {isAuth && <NotificationBell onOpenChat={(convId) => openChat(convId ?? null)} />}
             <button
-              className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-2 rounded-lg text-[#74685C] dark:text-[#A89A8A] hover:text-[#30291F] dark:hover:text-[#F6EFE6] hover:bg-[#F3EBDD] dark:hover:bg-[#2C241D] transition-colors"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="Toggle menu"
             >
@@ -210,7 +205,7 @@ export default function Layout() {
 
         {/* Mobile drawer */}
         {menuOpen && (
-          <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl py-3 flex flex-col gap-1 animate-slide-up px-4 shadow-lg">
+          <div className="md:hidden border-t border-[#E9DFD1] dark:border-[#382E25] bg-[#FAF6EF] dark:bg-[#171411] py-3 flex flex-col gap-1 px-4 shadow-md">
             {isAuth ? (
               <>
                 {navLinks.map((link) => (
@@ -219,10 +214,10 @@ export default function Layout() {
                     to={link.to}
                     onClick={() => setMenuOpen(false)}
                     className={cn(
-                      'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                      'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                       location.pathname === link.to
-                        ? 'bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 font-semibold'
-                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800',
+                        ? 'bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] text-[#B85C38] dark:text-[#D9734E] font-semibold'
+                        : 'text-[#74685C] dark:text-[#A89A8A] hover:text-[#30291F] dark:hover:text-[#F6EFE6] hover:bg-[#F3EBDD] dark:hover:bg-[#2C241D]',
                     )}
                   >
                     {link.icon}
@@ -232,7 +227,7 @@ export default function Layout() {
 
                 {roleMeta && (
                   <div className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold border w-fit ml-4 mt-1',
+                    'flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold border w-fit ml-3 mt-1',
                     roleMeta.cls,
                   )}>
                     {roleMeta.icon}
@@ -240,23 +235,23 @@ export default function Layout() {
                   </div>
                 )}
 
-                <div className="h-px bg-slate-200 dark:bg-slate-800 my-2" />
+                <div className="h-px bg-[#E9DFD1] dark:bg-[#382E25] my-2" />
 
                 <button
                   onClick={() => { setMenuOpen(false); setIsProfileOpen(true); }}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
-                             text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-950/40 transition-colors text-left"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium
+                             text-[#B85C38] dark:text-[#D9734E] hover:bg-[#FAEEE9] dark:hover:bg-[rgba(217,115,78,0.14)] transition-colors text-left"
                 >
                   <UserPlus size={15} />
                   Profile Settings
                 </button>
 
-                <div className="h-px bg-slate-200 dark:bg-slate-800 my-2" />
+                <div className="h-px bg-[#E9DFD1] dark:bg-[#382E25] my-2" />
 
                 <button
                   onClick={() => { setMenuOpen(false); handleLogout(); }}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
-                             text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors text-left"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium
+                             text-[#C24134] dark:text-[#F07167] hover:bg-[#FDEEED] dark:hover:bg-[rgba(194,65,52,0.18)] transition-colors text-left"
                 >
                   <LogOut size={15} />
                   Logout
@@ -267,11 +262,11 @@ export default function Layout() {
                 <Link
                   to="/auth"
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium
-                             text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                  className="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-sm font-medium
+                             text-[#30291F] dark:text-[#F6EFE6] bg-[#F3EBDD] dark:bg-[#2C241D] hover:bg-[#ECE3D3] transition-colors"
                 >
                   <LogIn size={15} />
-                  Login
+                  Log in
                 </Link>
                 <Link
                   to="/auth"
@@ -279,7 +274,7 @@ export default function Layout() {
                   className="btn-primary text-center justify-center w-full"
                 >
                   <UserPlus size={15} />
-                  Get Started
+                  Sign up
                 </Link>
               </div>
             )}

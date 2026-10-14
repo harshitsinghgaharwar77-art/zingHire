@@ -114,50 +114,52 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
     <>
       {/* Overlay */}
       <div 
-        className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[100] transition-opacity"
+        className="fixed inset-0 bg-black/40 backdrop-blur-xs z-[100] transition-opacity"
         onClick={onClose}
       />
 
-      {/* Slide-in Panel */}
-      <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl z-[110] transform transition-transform duration-300 ease-in-out flex flex-col border-l border-slate-200 dark:border-slate-800">
+      {/* Slide-in Panel (Wellfound Style) */}
+      <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white dark:bg-warm-darkCard shadow-2xl z-[110] transform transition-transform duration-300 ease-in-out flex flex-col border-l border-warm-border dark:border-warm-darkBorder">
         
         {/* Header */}
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/90">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500 flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-lg tracking-wide">{getInitials()}</span>
+        <div className="p-5 border-b border-warm-border dark:border-warm-darkBorder flex items-center justify-between bg-warm-sandTint/30 dark:bg-warm-darkElevated/30">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-warm-terracotta text-white flex items-center justify-center shadow-xs ring-4 ring-warm-sandTint dark:ring-warm-darkBorder">
+              <span className="font-bold text-base tracking-wide">{getInitials()}</span>
             </div>
             <div>
-              <h2 className="text-lg font-black text-slate-900 dark:text-white">Profile Settings</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{user?.email}</p>
+              <h2 className="text-base font-bold text-warm-charcoal dark:text-warm-darkCharcoal" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>
+                Profile Settings
+              </h2>
+              <p className="text-xs text-warm-muted dark:text-warm-darkMuted font-medium">{user?.email}</p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 rounded-full transition-colors cursor-pointer"
+            className="p-1.5 text-warm-muted hover:bg-warm-sandTint dark:hover:bg-warm-darkElevated hover:text-warm-charcoal dark:hover:text-warm-darkCharcoal rounded-lg transition-colors cursor-pointer"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-5">
           {loading ? (
-            <div className="flex flex-col items-center justify-center h-40 text-slate-400 gap-3">
-              <Loader2 className="animate-spin" size={24} />
-              <p className="text-sm font-medium">Loading profile...</p>
+            <div className="flex flex-col items-center justify-center h-40 text-warm-muted gap-2">
+              <Loader2 className="animate-spin text-warm-terracotta" size={20} />
+              <p className="text-xs font-medium">Loading profile…</p>
             </div>
           ) : (
-            <div className="space-y-5">
+            <div className="space-y-4">
               
               {/* Role Badge Section */}
-              <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-100 dark:border-slate-800 mb-6 flex items-center justify-between">
+              <div className="bg-warm-sandTint/40 dark:bg-warm-darkElevated/40 p-3.5 rounded-lg border border-warm-border dark:border-warm-darkBorder flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Account Type</p>
-                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-2">
-                    {user?.role === 'STUDENT' && <GraduationCap size={16} className="text-violet-500" />}
-                    {user?.role === 'RECRUITER' && <Briefcase size={16} className="text-emerald-500" />}
-                    {user?.role === 'ADMIN' && <Shield size={16} className="text-rose-500" />}
+                  <p className="text-[10px] font-bold text-warm-muted uppercase tracking-wider mb-0.5">Account Role</p>
+                  <p className="text-xs font-semibold text-warm-charcoal dark:text-warm-darkCharcoal flex items-center gap-1.5">
+                    {user?.role === 'STUDENT' && <GraduationCap size={15} className="text-warm-terracotta" />}
+                    {user?.role === 'RECRUITER' && <Briefcase size={15} className="text-[#2D7A58]" />}
+                    {user?.role === 'ADMIN' && <Shield size={15} className="text-warm-charcoal" />}
                     {user?.role}
                   </p>
                 </div>
@@ -165,40 +167,40 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
 
               {user?.role === 'STUDENT' && (
                 <>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">First Name</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="type-label block text-warm-charcoal dark:text-warm-darkCharcoal">First Name</label>
                       <input
                         type="text"
                         value={studentForm.firstName}
                         onChange={(e) => setStudentForm({ ...studentForm, firstName: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition-shadow"
+                        className="w-full px-3 py-2 bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg text-xs text-warm-charcoal dark:text-warm-darkCharcoal focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
                       />
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Last Name</label>
+                    <div className="space-y-1">
+                      <label className="type-label block text-warm-charcoal dark:text-warm-darkCharcoal">Last Name</label>
                       <input
                         type="text"
                         value={studentForm.lastName}
                         onChange={(e) => setStudentForm({ ...studentForm, lastName: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition-shadow"
+                        className="w-full px-3 py-2 bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg text-xs text-warm-charcoal dark:text-warm-darkCharcoal focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">College / University</label>
+                  <div className="space-y-1">
+                    <label className="type-label block text-warm-charcoal dark:text-warm-darkCharcoal">College / University</label>
                     <input
                       type="text"
                       value={studentForm.college}
                       onChange={(e) => setStudentForm({ ...studentForm, college: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition-shadow"
+                      className="w-full px-3 py-2 bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg text-xs text-warm-charcoal dark:text-warm-darkCharcoal focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">CGPA</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="type-label block text-warm-charcoal dark:text-warm-darkCharcoal">CGPA</label>
                       <input
                         type="number"
                         min="0"
@@ -206,33 +208,33 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
                         step="0.1"
                         value={studentForm.cgpa}
                         onChange={(e) => setStudentForm({ ...studentForm, cgpa: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition-shadow"
+                        className="w-full px-3 py-2 bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg text-xs text-warm-charcoal dark:text-warm-darkCharcoal focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
                       />
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Experience (Years)</label>
+                    <div className="space-y-1">
+                      <label className="type-label block text-warm-charcoal dark:text-warm-darkCharcoal">Experience (Years)</label>
                       <input
                         type="number"
                         min="0"
                         step="0.5"
                         value={studentForm.experienceYears}
                         onChange={(e) => setStudentForm({ ...studentForm, experienceYears: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition-shadow"
+                        className="w-full px-3 py-2 bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg text-xs text-warm-charcoal dark:text-warm-darkCharcoal focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
                       />
                     </div>
                   </div>
 
                   {studentForm.parsedSkills.length > 0 && (
-                    <div className="space-y-2 pt-2">
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Skills (from Resume)</label>
-                      <div className="flex flex-wrap gap-2">
+                    <div className="space-y-1.5 pt-1">
+                      <label className="type-label block text-warm-charcoal dark:text-warm-darkCharcoal">Verified Resume Skills</label>
+                      <div className="flex flex-wrap gap-1.5">
                         {studentForm.parsedSkills.map((s) => (
-                          <span key={s} className="px-2 py-1 bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 text-xs font-semibold rounded-md border border-violet-100 dark:border-violet-800">
+                          <span key={s} className="px-2 py-0.5 bg-warm-sandTint dark:bg-warm-darkElevated text-warm-charcoal dark:text-warm-darkCharcoal text-[11px] font-medium rounded border border-warm-border dark:border-warm-darkBorder">
                             {s}
                           </span>
                         ))}
                       </div>
-                      <p className="text-xs text-slate-400 mt-1">Re-upload your resume to update skills.</p>
+                      <p className="text-[11px] text-warm-muted mt-1">Re-upload your resume on the Talent Hub to update skills.</p>
                     </div>
                   )}
                 </>
@@ -240,30 +242,30 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
 
               {user?.role === 'RECRUITER' && (
                 <>
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Company Name</label>
+                  <div className="space-y-1">
+                    <label className="type-label block text-warm-charcoal dark:text-warm-darkCharcoal">Company Name</label>
                     <input
                       type="text"
                       value={recruiterForm.companyName}
                       onChange={(e) => setRecruiterForm({ ...recruiterForm, companyName: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow"
+                      className="w-full px-3 py-2 bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg text-xs text-warm-charcoal dark:text-warm-darkCharcoal focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
                     />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Designation</label>
+                  <div className="space-y-1">
+                    <label className="type-label block text-warm-charcoal dark:text-warm-darkCharcoal">Designation / Role</label>
                     <input
                       type="text"
                       value={recruiterForm.designation}
                       onChange={(e) => setRecruiterForm({ ...recruiterForm, designation: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow"
+                      className="w-full px-3 py-2 bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg text-xs text-warm-charcoal dark:text-warm-darkCharcoal focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
                     />
                   </div>
                 </>
               )}
 
               {user?.role === 'ADMIN' && (
-                <div className="p-4 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 rounded-xl border border-rose-100 dark:border-rose-900/50 flex items-center justify-center">
-                  <p className="text-sm font-medium text-center">Admin accounts are system-managed.<br/>No editable profile fields.</p>
+                <div className="p-4 bg-warm-sandTint/50 dark:bg-warm-darkElevated text-warm-charcoal dark:text-warm-darkCharcoal rounded-lg border border-warm-border dark:border-warm-darkBorder flex items-center justify-center">
+                  <p className="text-xs font-medium text-center">Admin accounts are system-managed.<br/>No editable profile fields.</p>
                 </div>
               )}
             </div>
@@ -271,15 +273,15 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
         </div>
 
         {/* Footer Actions */}
-        <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3">
+        <div className="p-4 border-t border-warm-border dark:border-warm-darkBorder bg-white dark:bg-warm-darkElevated space-y-2">
           {user?.role !== 'ADMIN' && (
             <button
               onClick={() => void handleSave()}
               disabled={saving || loading}
-              className="w-full btn-primary flex justify-center py-2.5 cursor-pointer"
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-2 bg-warm-terracotta hover:bg-warm-terracottaHover text-white text-xs font-bold rounded-lg shadow-sm transition-all disabled:opacity-50 cursor-pointer"
             >
-              {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-              {saving ? 'Saving Changes...' : 'Save Changes'}
+              {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+              {saving ? 'Saving Changes…' : 'Save Changes'}
             </button>
           )}
           
@@ -288,9 +290,9 @@ export default function ProfilePanel({ isOpen, onClose }: ProfilePanelProps) {
               onClose();
               logout();
             }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors border border-red-100 dark:border-red-900/50 cursor-pointer"
+            className="w-full flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-[#B83E28] bg-[#FDF0ED] dark:bg-[#2D1612] hover:bg-[#FBE4DE] transition-colors border border-[#F7CBC3] dark:border-[#4D221B] cursor-pointer"
           >
-            <LogOut size={16} />
+            <LogOut size={14} />
             Sign Out
           </button>
         </div>

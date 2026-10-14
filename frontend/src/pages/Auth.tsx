@@ -63,7 +63,7 @@ export default function Auth() {
         }>('/auth/login', { email: currentEmail, password: currentPassword });
 
         setAuth(res.data.token, res.data.user);
-        toast.success('Welcome to ZingHire! 🎉');
+        toast.success('Welcome back to ZingHire! 🎉');
         navigate(res.data.user.role === 'STUDENT' ? '/student' : '/recruiter');
       } else {
         const payload =
@@ -80,7 +80,7 @@ export default function Auth() {
         }>('/auth/login', { email: currentEmail, password: currentPassword });
 
         setAuth(loginRes.data.token, loginRes.data.user);
-        toast.success('Welcome to ZingHire! Account created. 🚀');
+        toast.success('Account created! Welcome to ZingHire. 🚀');
         navigate(loginRes.data.user.role === 'STUDENT' ? '/student' : '/recruiter');
       }
     } catch (err: unknown) {
@@ -95,39 +95,39 @@ export default function Auth() {
 
   return (
     <div className="min-h-[calc(100vh-6rem)] flex items-center justify-center p-4 relative">
-      {/* Background dot grid */}
-      <div className="fixed inset-0 pointer-events-none dot-grid opacity-50" />
+      {/* Background dot pattern */}
+      <div className="fixed inset-0 pointer-events-none dot-grid opacity-40" />
 
-      {/* Ambient gradient glow */}
+      {/* Ambient warm glow */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-violet-400/20 dark:bg-violet-600/15 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-400/20 dark:bg-cyan-600/15 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -left-32 w-80 h-80 bg-warm-terracotta/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-warm-sand/30 dark:bg-warm-darkElevated/30 rounded-full blur-3xl" />
       </div>
 
       <div className="w-full max-w-md animate-fade-in relative z-10">
         {/* Brand header */}
-        <div className="flex flex-col items-center text-center mb-8">
+        <div className="flex flex-col items-center text-center mb-6">
           <div className="mb-3">
             <Logo size="lg" />
           </div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-            {tab === 'login' ? 'Welcome back! Sign in to accelerate your career.' : 'Create your ZingHire account to start matching.'}
+          <p className="text-warm-muted dark:text-warm-darkMuted text-xs font-medium">
+            {tab === 'login' ? 'Welcome back! Sign in to continue exploring matches.' : 'Create your ZingHire account to start matching with top startups.'}
           </p>
         </div>
 
-        {/* Card */}
-        <div className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800 rounded-2xl p-7 sm:p-8 shadow-lg">
+        {/* Wellfound Auth Card */}
+        <div className="wellfound-card p-6 sm:p-8 shadow-sm">
           {/* Tab switcher */}
-          <div className="flex bg-slate-100 dark:bg-slate-800/80 rounded-xl p-1 mb-6 gap-1">
+          <div className="flex bg-warm-sandTint dark:bg-warm-darkElevated rounded-lg p-1 mb-6 gap-1 border border-warm-border dark:border-warm-darkBorder">
             {(['login', 'register'] as Tab[]).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
                 className={cn(
-                  'flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer',
+                  'flex-1 py-1.5 rounded-md text-xs font-semibold transition-all duration-150 cursor-pointer',
                   tab === t
-                    ? 'bg-white dark:bg-slate-700 text-violet-700 dark:text-cyan-400 shadow-sm border border-slate-200/80 dark:border-slate-600'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200',
+                    ? 'bg-white dark:bg-warm-darkCard text-warm-charcoal dark:text-warm-darkCharcoal shadow-sm border border-warm-border dark:border-warm-darkBorder font-bold'
+                    : 'text-warm-muted dark:text-warm-darkMuted hover:text-warm-charcoal dark:hover:text-warm-darkCharcoal',
                 )}
               >
                 {t === 'login' ? 'Sign In' : 'Sign Up'}
@@ -138,23 +138,24 @@ export default function Auth() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Role picker (register only) */}
             {tab === 'register' && (
-              <div className="grid grid-cols-2 gap-3 mb-2">
+              <div className="grid grid-cols-2 gap-2.5 mb-2">
                 {(['STUDENT', 'RECRUITER'] as Role[]).map((r) => {
                   const Icon = r === 'STUDENT' ? GraduationCap : Briefcase;
+                  const isSelected = role === r;
                   return (
                     <button
                       key={r}
                       type="button"
                       onClick={() => setRole(r)}
                       className={cn(
-                        'flex flex-col items-center gap-2 p-3.5 rounded-xl border-2 transition-all duration-200 cursor-pointer',
-                        role === r
-                          ? 'border-violet-500 bg-violet-50/80 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300'
-                          : 'border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-800/60',
+                        'flex flex-col items-center gap-1.5 p-3 rounded-lg border transition-all duration-150 cursor-pointer',
+                        isSelected
+                          ? 'border-warm-terracotta bg-warm-sandTint/70 dark:bg-warm-darkElevated text-warm-charcoal dark:text-warm-darkCharcoal font-bold'
+                          : 'border-warm-border dark:border-warm-darkBorder text-warm-muted dark:text-warm-darkMuted hover:border-warm-sand bg-white dark:bg-warm-darkCard',
                       )}
                     >
-                      <Icon size={20} className={role === r ? 'text-violet-600 dark:text-cyan-400' : ''} />
-                      <span className="text-xs font-bold uppercase tracking-wide">{r}</span>
+                      <Icon size={18} className={isSelected ? 'text-warm-terracotta dark:text-warm-darkTerracotta' : ''} />
+                      <span className="text-[11px] font-bold uppercase tracking-wider">{r}</span>
                     </button>
                   );
                 })}
@@ -164,27 +165,27 @@ export default function Auth() {
             {/* Extra fields for Student */}
             {tab === 'register' && role === 'STUDENT' && (
               <>
-                <div className="grid grid-cols-2 gap-3">
-                  <InputField label="First Name" value={firstName} onChange={setFirstName} placeholder="Rahul" />
-                  <InputField label="Last Name"  value={lastName}  onChange={setLastName}  placeholder="Sharma" />
+                <div className="grid grid-cols-2 gap-2.5">
+                  <InputField label="First Name" value={firstName} onChange={setFirstName} placeholder="e.g. Alex" />
+                  <InputField label="Last Name"  value={lastName}  onChange={setLastName}  placeholder="e.g. Mercer" />
                 </div>
-                <InputField label="College" value={college} onChange={setCollege} placeholder="IIT Bombay" />
-                <InputField label="CGPA" value={cgpa} onChange={setCgpa} placeholder="8.5" type="number" />
+                <InputField label="University / College" value={college} onChange={setCollege} placeholder="e.g. Stanford University" />
+                <InputField label="Current CGPA / Grade" value={cgpa} onChange={setCgpa} placeholder="e.g. 8.5" type="number" />
               </>
             )}
             {tab === 'register' && role === 'RECRUITER' && (
               <>
-                <InputField label="Company" value={companyName} onChange={setCompanyName} placeholder="Acme Corp" />
-                <InputField label="Designation" value={designation} onChange={setDesignation} placeholder="Talent Lead" />
+                <InputField label="Company Name" value={companyName} onChange={setCompanyName} placeholder="e.g. Acme Ventures" />
+                <InputField label="Your Role / Title" value={designation} onChange={setDesignation} placeholder="e.g. Head of Talent" />
               </>
             )}
 
             {/* Email */}
-            <InputField label="Email" name="email" value={email} onChange={setEmail} placeholder="you@example.com" type="email" />
+            <InputField label="Email Address" name="email" value={email} onChange={setEmail} placeholder="you@domain.com" type="email" />
 
             {/* Password */}
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 uppercase tracking-wider">
+              <label className="type-label block mb-1 text-warm-charcoal dark:text-warm-darkCharcoal">
                 Password
               </label>
               <div className="relative">
@@ -195,17 +196,14 @@ export default function Auth() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full bg-slate-50/80 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 pr-10
-                             text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500
-                             focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20
-                             transition-colors"
+                  className="w-full bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg px-3.5 py-2 pr-9 text-xs text-warm-charcoal dark:text-warm-darkCharcoal placeholder-warm-muted/60 focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPass((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-muted hover:text-warm-charcoal dark:hover:text-warm-darkCharcoal transition-colors cursor-pointer"
                 >
-                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
             </div>
@@ -214,43 +212,37 @@ export default function Auth() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-600 text-white font-bold
-                         py-3 rounded-xl hover:shadow-lg hover:shadow-violet-500/25 active:scale-[0.99]
-                         transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed
-                         flex items-center justify-center gap-2 mt-3 shadow-md text-sm cursor-pointer"
+              className="w-full bg-warm-terracotta hover:bg-warm-terracottaHover text-white font-bold py-2.5 rounded-lg active:scale-[0.99] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4 shadow-sm text-xs cursor-pointer"
+              style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}
             >
-              {loading && <Loader2 size={16} className="animate-spin" />}
-              {tab === 'login' ? 'Sign In to ZingHire' : 'Create My ZingHire Account'}
+              {loading && <Loader2 size={15} className="animate-spin" />}
+              {tab === 'login' ? 'Sign In' : 'Create Account'}
             </button>
           </form>
 
           {/* ── Google OAuth divider ──────────────────────────────────────── */}
-          <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800" />
-            <span className="text-xs text-slate-400 dark:text-slate-500 font-medium uppercase tracking-wider">or</span>
-            <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800" />
+          <div className="flex items-center gap-3 my-4">
+            <div className="flex-1 h-px bg-warm-border dark:bg-warm-darkBorder" />
+            <span className="text-[10px] text-warm-muted font-semibold uppercase tracking-wider">or continue with</span>
+            <div className="flex-1 h-px bg-warm-border dark:bg-warm-darkBorder" />
           </div>
 
           {/* Continue with Google */}
           <a
             href={`${(import.meta.env['VITE_API_URL'] as string | undefined) || '/api'}/auth/google`}
-            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl
-                       border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800
-                       hover:bg-slate-50 dark:hover:bg-slate-700/80 active:scale-[0.99]
-                       text-sm font-semibold text-slate-700 dark:text-slate-200 shadow-sm
-                       transition-all duration-150"
+            className="w-full flex items-center justify-center gap-2.5 px-4 py-2 rounded-lg border border-warm-border dark:border-warm-darkBorder bg-white dark:bg-warm-darkCard hover:bg-warm-sandTint/50 dark:hover:bg-warm-darkElevated active:scale-[0.99] text-xs font-semibold text-warm-charcoal dark:text-warm-darkCharcoal shadow-sm transition-all duration-150"
           >
             <GoogleIcon />
             Continue with Google
           </a>
 
           {/* Footer toggle */}
-          <div className="mt-6 text-center">
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              {tab === 'login' ? "Don't have an account?" : 'Already registered?'}{' '}
+          <div className="mt-5 text-center">
+            <p className="text-xs text-warm-muted dark:text-warm-darkMuted">
+              {tab === 'login' ? "Don't have an account yet?" : 'Already have an account?'}{' '}
               <button
                 onClick={() => setTab(tab === 'login' ? 'register' : 'login')}
-                className="text-violet-600 dark:text-cyan-400 font-semibold hover:underline cursor-pointer"
+                className="text-warm-terracotta dark:text-warm-darkTerracotta font-semibold hover:underline cursor-pointer"
               >
                 {tab === 'login' ? 'Sign Up' : 'Sign In'}
               </button>
@@ -259,8 +251,8 @@ export default function Auth() {
         </div>
 
         {/* Footer note */}
-        <p className="text-center text-slate-400 dark:text-slate-500 text-xs mt-6">
-          By continuing, you agree to ZingHire's Terms & Privacy Policy.
+        <p className="text-center text-warm-muted dark:text-warm-darkMuted text-[11px] mt-4">
+          By signing in or creating an account, you agree to ZingHire's Terms of Service and Privacy Policy.
         </p>
       </div>
     </div>
@@ -280,7 +272,7 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 uppercase tracking-wider">
+      <label className="type-label block mb-1 text-warm-charcoal dark:text-warm-darkCharcoal">
         {label}
       </label>
       <input
@@ -290,10 +282,7 @@ function InputField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required
-        className="w-full bg-slate-50/80 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5
-                   text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500
-                   focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20
-                   transition-colors"
+        className="w-full bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg px-3.5 py-2 text-xs text-warm-charcoal dark:text-warm-darkCharcoal placeholder-warm-muted/60 focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
       />
     </div>
   );

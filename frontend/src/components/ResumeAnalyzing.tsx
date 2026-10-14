@@ -13,10 +13,10 @@ interface Props {
 }
 
 const PHASES = [
-  { icon: FileSearch,    label: 'Reading your PDF…',           duration: 2500 },
-  { icon: Brain,         label: 'Extracting text content…',    duration: 3000 },
-  { icon: Sparkles,      label: 'Gemini is analysing skills…', duration: 4500 },
-  { icon: CheckCircle2,  label: 'Almost done…',                duration: 15000 },
+  { icon: FileSearch,    label: 'Reading your PDF…',                  duration: 2500 },
+  { icon: Brain,         label: 'Extracting text and credentials…',  duration: 3000 },
+  { icon: Sparkles,      label: 'Gemini AI is analyzing skills…',    duration: 4500 },
+  { icon: CheckCircle2,  label: 'Matching against active startups…', duration: 15000 },
 ];
 
 export default function ResumeAnalyzing({ onComplete, onDismiss }: Props) {
@@ -74,88 +74,83 @@ export default function ResumeAnalyzing({ onComplete, onDismiss }: Props) {
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-500
                   ${exiting ? 'opacity-0 scale-105' : 'opacity-100 scale-100'}`}
-      style={{ background: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(20px)' }}
+      style={{ background: 'rgba(23, 20, 17, 0.75)', backdropFilter: 'blur(16px)' }}
     >
       {/* Card */}
-      <div className="relative w-full max-w-sm mx-4 overflow-hidden animate-view-enter"
-           style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-                    borderRadius: '1.5rem', padding: '2.5rem 2rem', backdropFilter: 'blur(24px)' }}>
+      <div className="relative w-full max-w-sm mx-4 overflow-hidden animate-view-enter bg-white dark:bg-[#221C16] border border-[#E9DFD1] dark:border-[#382E25] rounded-2xl p-7 shadow-2xl">
 
         {/* Close / Dismiss button */}
         <button
           onClick={handleDone}
-          className="absolute top-4 right-4 z-10 p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+          className="absolute top-4 right-4 z-10 p-1.5 rounded-lg text-[#74685C] dark:text-[#A89887] hover:text-[#30291F] dark:hover:text-[#F6EFE6] hover:bg-[#FAF6EF] dark:hover:bg-[#171411] transition-colors cursor-pointer"
           title="Dismiss overlay"
         >
           <X size={16} />
         </button>
 
-        {/* Glowing orb behind icon */}
+        {/* Glowing warm ambient circle behind icon */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 pointer-events-none"
-             style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%)', filter: 'blur(30px)' }} />
+             style={{ background: 'radial-gradient(circle, rgba(184,92,56,0.2) 0%, transparent 70%)', filter: 'blur(28px)' }} />
 
         {/* Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="relative p-5 rounded-2xl"
-               style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)' }}>
-            <CurrentIcon size={32} className="text-indigo-300" style={{ animation: 'radarPulse 1.8s ease-in-out infinite' }} />
+        <div className="flex justify-center mb-5">
+          <div className="relative p-4 rounded-xl bg-[#F3EBDD] dark:bg-[#2E241B] border border-[#E9DFD1] dark:border-[#382E25]">
+            <CurrentIcon size={28} className="text-[#B85C38] dark:text-[#D9734E]" style={{ animation: 'radarPulse 1.8s ease-in-out infinite' }} />
             {/* Spinning ring */}
             <svg className="absolute inset-0 w-full h-full" viewBox="0 0 80 80">
-              <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(99,102,241,0.25)" strokeWidth="2" />
-              <circle cx="40" cy="40" r="36" fill="none" stroke="#6366f1" strokeWidth="2"
+              <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(184,92,56,0.15)" strokeWidth="2.5" />
+              <circle cx="40" cy="40" r="36" fill="none" stroke="#B85C38" strokeWidth="2.5"
                 strokeDasharray="226" strokeDashoffset="170"
                 strokeLinecap="round"
-                style={{ transformOrigin: 'center', animation: 'spin 2s linear infinite' }} />
+                style={{ transformOrigin: 'center', animation: 'spin 1.8s linear infinite' }} />
             </svg>
           </div>
         </div>
 
         {/* Headline */}
-        <h2 className="text-center text-white text-xl font-black mb-2"
-            style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.03em' }}>
-          AI is Analysing Your Resume
+        <h2 className="text-center text-[#30291F] dark:text-[#F6EFE6] text-lg font-bold mb-1"
+            style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif', letterSpacing: '-0.02em' }}>
+          AI Parsing Your Resume
         </h2>
 
         {/* Phase label */}
-        <p className="text-center text-indigo-300 text-sm font-medium mb-6 transition-all duration-300">
+        <p className="text-center text-[#B85C38] dark:text-[#D9734E] text-xs font-semibold mb-5 transition-all duration-300">
           {PHASES[phaseIdx]!.label}
         </p>
 
         {/* Progress bar */}
         <div className="mb-4">
-          <div className="flex justify-between text-xs text-slate-400 font-semibold mb-2">
-            <span>Progress</span>
+          <div className="flex justify-between text-xs text-[#74685C] dark:text-[#A89887] font-semibold mb-1.5">
+            <span>Analyzing Content</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
-            <div className="h-full rounded-full transition-all duration-500 ease-out"
-                 style={{ width: `${progress}%`,
-                          background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa)',
-                          boxShadow: '0 0 12px rgba(99,102,241,0.6)' }} />
+          <div className="h-1.5 rounded-full overflow-hidden bg-[#E9DFD1] dark:bg-[#382E25]">
+            <div className="h-full rounded-full transition-all duration-500 ease-out bg-[#B85C38]"
+                 style={{ width: `${progress}%` }} />
           </div>
         </div>
 
         {/* Phase dots */}
-        <div className="flex justify-center gap-2">
+        <div className="flex justify-center gap-1.5">
           {PHASES.map((_, i) => (
-            <div key={i} className="rounded-full transition-all duration-400"
+            <div key={i} className="rounded-full transition-all duration-300"
                  style={{
-                   width:      i === phaseIdx ? '24px' : '8px',
-                   height:     '8px',
-                   background: i <= phaseIdx ? '#6366f1' : 'rgba(255,255,255,0.12)',
+                   width:      i === phaseIdx ? '20px' : '6px',
+                   height:     '6px',
+                   background: i <= phaseIdx ? '#B85C38' : 'rgba(184,92,56,0.2)',
                  }} />
           ))}
         </div>
 
         {/* Sub-text */}
-        <p className="text-center text-slate-500 text-xs mt-5">
-          Skills, CGPA, experience & projects are being extracted
+        <p className="text-center text-[#74685C] dark:text-[#A89887] text-[11px] mt-4">
+          Extracting competencies, college credentials, CGPA & experience
         </p>
 
         {/* Dev shortcut — hidden in production */}
         {import.meta.env.DEV && (
           <button onClick={handleDone}
-            className="mt-4 w-full text-xs text-slate-600 hover:text-slate-400 transition-colors">
+            className="mt-3 w-full text-[11px] text-[#74685C] hover:text-[#B85C38] transition-colors cursor-pointer">
             [DEV] Simulate complete
           </button>
         )}

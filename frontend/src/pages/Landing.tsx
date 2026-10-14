@@ -1,147 +1,234 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GraduationCap, Briefcase, Sparkles, ArrowRight, CheckCircle2, Shield, Zap } from 'lucide-react';
+import {
+  GraduationCap,
+  Briefcase,
+  Search,
+  Sparkles,
+  ArrowRight,
+  Shield,
+  MessageSquare,
+  Zap,
+  TrendingUp,
+} from 'lucide-react';
 
 /**
- * Landing Page — ZingHire Elite Showcase
- * Features dynamic AI match highlights, dual role entry points,
- * and high-contrast light/dark mode aesthetics.
+ * Landing Page — Wellfound-Inspired Startup Job Discovery & Marketplace
+ * Warm Ivory (#FAF6EF) + Muted Terracotta (#B85C38) + Warm Charcoal (#30291F)
  */
 export default function Landing() {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTag, setSelectedTag] = useState<string>('All');
+
+  const POPULAR_TAGS = ['All', 'Full Stack', 'Frontend', 'Backend', 'Python', 'React', 'AI / ML', 'Remote'];
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate('/auth');
+  };
 
   return (
-    <div className="min-h-[calc(100vh-6rem)] w-full flex flex-col items-center justify-center text-center relative overflow-hidden py-12">
+    <div className="w-full flex flex-col items-center min-h-[calc(100vh-8rem)] py-6 sm:py-12">
+      {/* ── Hero Section ─────────────────────────────────────────────────── */}
+      <div className="w-full max-w-4xl mx-auto px-4 text-center">
 
-      {/* ── Dot-grid background ─────────────────────────────────────────── */}
-      <div className="absolute inset-0 pointer-events-none dot-grid opacity-60" />
-
-      {/* ── Soft ambient gradient glow ──────────────────────────────────── */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-violet-400/20 dark:bg-violet-600/15 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-cyan-400/20 dark:bg-cyan-600/15 rounded-full blur-3xl" />
-      </div>
-
-      {/* ── Hero content ─────────────────────────────────────────────────── */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 animate-fade-in">
-
-        {/* AI badge — glassmorphism pill */}
-        <div className="inline-flex items-center gap-2 mb-8 animate-scale-in px-4 py-1.5 rounded-full border border-violet-200/80 dark:border-violet-800/60 bg-violet-50/70 dark:bg-violet-950/40 backdrop-blur-md shadow-sm">
-          <Zap size={13} className="text-violet-600 dark:text-cyan-400 animate-pulse" />
-          <span className="text-xs font-bold uppercase tracking-wider text-violet-700 dark:text-violet-300">
-            Next-Gen AI Campus Placement Engine
-          </span>
+        {/* Small Category Pill */}
+        <div className="inline-flex items-center gap-2 mb-6 px-3.5 py-1 rounded-full border border-[#E9DFD1] dark:border-[#382E25] bg-[#F3EBDD] dark:bg-[#2C241D] text-[#74685C] dark:text-[#D8CEBF] text-xs font-semibold">
+          <Zap size={13} className="text-[#B85C38] dark:text-[#D9734E]" />
+          <span>The Campus & Startup Hiring Marketplace</span>
         </div>
 
-        {/* Main headline */}
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08] mb-6 text-slate-900 dark:text-white animate-view-enter">
-          Ignite Your Next Move with{' '}
-          <span className="gradient-text">ZingHire</span>
+        {/* Main Heading */}
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-[#30291F] dark:text-[#F6EFE6] leading-[1.12] mb-5">
+          Where top talent meets <br className="hidden sm:inline" />
+          <span className="text-[#B85C38] dark:text-[#D9734E]">forward-thinking</span> startups.
         </h1>
 
         {/* Subtitle */}
-        <p className="text-slate-600 dark:text-slate-300 text-lg sm:text-xl max-w-2xl mx-auto mb-3 leading-relaxed font-normal">
-          ZingHire matches candidates to top-tier placements using our{' '}
-          <span className="text-violet-600 dark:text-cyan-400 font-semibold">Hybrid O(1) Jaccard Engine</span>
-          {' '}— scoring skills, CGPA, and coursework in milliseconds.
-        </p>
-        <p className="text-slate-400 dark:text-slate-500 text-xs sm:text-sm tracking-widest uppercase mb-12 font-medium">
-          Trusted by university placement cells & forward-thinking recruiters
+        <p className="text-base sm:text-lg text-[#74685C] dark:text-[#B0A294] max-w-2xl mx-auto mb-8 font-normal leading-relaxed">
+          ZingHire connects ambitious graduates and engineers with innovative teams.
+          Zero spam, instant skill matching in milliseconds, and direct recruiter chat.
         </p>
 
-        {/* CTA buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-          <button
-            onClick={() => navigate('/auth')}
-            className="group relative w-full sm:w-auto flex items-center justify-center gap-3
-                       bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-600 text-white font-bold text-base px-8 py-4 rounded-2xl
-                       hover:shadow-lg hover:shadow-violet-500/25 active:scale-[0.98]
-                       transition-all duration-200 shadow-md cursor-pointer"
-          >
-            <GraduationCap size={20} />
-            I am a Student
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-
-          <button
-            onClick={() => navigate('/auth')}
-            className="group relative w-full sm:w-auto flex items-center justify-center gap-3
-                       bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-white font-bold text-base px-8 py-4 rounded-2xl
-                       border-2 border-slate-200 dark:border-slate-800 hover:border-violet-500 dark:hover:border-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/60
-                       active:scale-[0.98] transition-all duration-200 backdrop-blur-md cursor-pointer"
-          >
-            <Briefcase size={20} className="text-violet-600 dark:text-cyan-400" />
-            I am a Recruiter
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </button>
+        {/* ── Wellfound-Style Job Search & Discovery Bar ───────────────────── */}
+        <div className="w-full max-w-2xl mx-auto mb-6 bg-white dark:bg-[#221C16] border border-[#E9DFD1] dark:border-[#382E25] rounded-xl p-2 shadow-sm">
+          <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row items-center gap-2">
+            <div className="flex items-center gap-2.5 px-3 flex-1 w-full text-left">
+              <Search size={18} className="text-[#74685C] dark:text-[#A89A8A] flex-shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search job titles, skills (e.g. React, Node.js, Python)…"
+                className="w-full bg-transparent border-none text-sm text-[#30291F] dark:text-[#F6EFE6] placeholder:text-[#9A8D7E] dark:placeholder:text-[#7C6E5F] focus:outline-none focus:ring-0 !border-0 !shadow-none"
+              />
+            </div>
+            <button
+              type="submit"
+              className="btn-primary w-full sm:w-auto text-sm !py-2.5 !px-5 whitespace-nowrap cursor-pointer"
+            >
+              Search Jobs
+            </button>
+          </form>
         </div>
 
-        {/* Admin Link */}
-        <div className="mb-14">
+        {/* Filter Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-1.5 mb-10 max-w-xl mx-auto">
+          <span className="text-xs text-[#74685C] dark:text-[#A89A8A] mr-1 font-medium">Trending:</span>
+          {POPULAR_TAGS.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => {
+                setSelectedTag(tag);
+                if (tag !== 'All') setSearchQuery(tag);
+              }}
+              className={`text-xs px-2.5 py-1 rounded-md border transition-colors cursor-pointer ${
+                selectedTag === tag
+                  ? 'bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] text-[#B85C38] dark:text-[#D9734E] border-[#EFC8B9] dark:border-[rgba(217,115,78,0.32)] font-semibold'
+                  : 'bg-white dark:bg-[#221C16] text-[#74685C] dark:text-[#B0A294] border-[#E9DFD1] dark:border-[#382E25] hover:border-[#D8CBBA]'
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+
+        {/* ── Dual Role Callouts ─────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-14 text-left">
+          {/* Candidate Card */}
+          <div className="bg-white dark:bg-[#221C16] border border-[#E9DFD1] dark:border-[#382E25] rounded-xl p-5 hover:border-[#D8CBBA] dark:hover:border-[#4A3D32] transition-colors flex flex-col justify-between">
+            <div>
+              <div className="w-9 h-9 rounded-lg bg-[#F3EBDD] dark:bg-[#2C241D] text-[#B85C38] dark:text-[#D9734E] flex items-center justify-center mb-3">
+                <GraduationCap size={18} />
+              </div>
+              <h3 className="text-base font-bold text-[#30291F] dark:text-[#F6EFE6] mb-1">Looking for a role?</h3>
+              <p className="text-xs text-[#74685C] dark:text-[#B0A294] leading-relaxed mb-4">
+                Upload your resume to get instant, algorithmic match scores against active startup positions.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/auth')}
+              className="btn-primary text-xs !py-2 !px-3.5 w-fit flex items-center gap-1.5 cursor-pointer"
+            >
+              Join as Candidate
+              <ArrowRight size={13} />
+            </button>
+          </div>
+
+          {/* Recruiter Card */}
+          <div className="bg-white dark:bg-[#221C16] border border-[#E9DFD1] dark:border-[#382E25] rounded-xl p-5 hover:border-[#D8CBBA] dark:hover:border-[#4A3D32] transition-colors flex flex-col justify-between">
+            <div>
+              <div className="w-9 h-9 rounded-lg bg-[#F3EBDD] dark:bg-[#2C241D] text-[#544A3E] dark:text-[#D8CEBF] flex items-center justify-center mb-3">
+                <Briefcase size={18} />
+              </div>
+              <h3 className="text-base font-bold text-[#30291F] dark:text-[#F6EFE6] mb-1">Hiring startup talent?</h3>
+              <p className="text-xs text-[#74685C] dark:text-[#B0A294] leading-relaxed mb-4">
+                Post positions, extract skills automatically with AI, and chat directly with shortlisted candidates.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/auth')}
+              className="btn-secondary text-xs !py-2 !px-3.5 w-fit flex items-center gap-1.5 cursor-pointer"
+            >
+              Post a Role
+              <ArrowRight size={13} />
+            </button>
+          </div>
+        </div>
+
+        {/* ── Feature Grid ───────────────────────────────────────────────── */}
+        <div className="border-t border-[#E9DFD1] dark:border-[#382E25] pt-12 mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-xs font-bold text-[#74685C] dark:text-[#A89A8A] uppercase tracking-wider mb-1">Built For Clarity</h2>
+            <p className="text-lg font-bold text-[#30291F] dark:text-[#F6EFE6]">How ZingHire works for both sides</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left max-w-4xl mx-auto">
+            <div className="bg-white dark:bg-[#221C16] border border-[#E9DFD1] dark:border-[#382E25] rounded-xl p-5">
+              <div className="w-8 h-8 rounded-lg bg-[#FAEEE9] dark:bg-[rgba(217,115,78,0.18)] text-[#B85C38] dark:text-[#D9734E] flex items-center justify-center mb-3">
+                <Sparkles size={16} />
+              </div>
+              <h4 className="text-sm font-bold text-[#30291F] dark:text-[#F6EFE6] mb-1.5">AI Skill Parsing</h4>
+              <p className="text-xs text-[#74685C] dark:text-[#B0A294] leading-relaxed">
+                Gemini 2.0 automatically extracts verified skills and experience from candidate resumes in seconds.
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-[#221C16] border border-[#E9DFD1] dark:border-[#382E25] rounded-xl p-5">
+              <div className="w-8 h-8 rounded-lg bg-[#EBF7F0] dark:bg-[rgba(45,122,88,0.22)] text-[#2D7A58] dark:text-[#52B788] flex items-center justify-center mb-3">
+                <TrendingUp size={16} />
+              </div>
+              <h4 className="text-sm font-bold text-[#30291F] dark:text-[#F6EFE6] mb-1.5">Transparent Scoring</h4>
+              <p className="text-xs text-[#74685C] dark:text-[#B0A294] leading-relaxed">
+                Real-time Jaccard algorithmic match scoring gives candidates clear visibility into required vs. missing skills.
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-[#221C16] border border-[#E9DFD1] dark:border-[#382E25] rounded-xl p-5">
+              <div className="w-8 h-8 rounded-lg bg-[#F3EBDD] dark:bg-[#2C241D] text-[#544A3E] dark:text-[#D8CEBF] flex items-center justify-center mb-3">
+                <MessageSquare size={16} />
+              </div>
+              <h4 className="text-sm font-bold text-[#30291F] dark:text-[#F6EFE6] mb-1.5">Direct Live Chat</h4>
+              <p className="text-xs text-[#74685C] dark:text-[#B0A294] leading-relaxed">
+                Shortlisted candidates instantly connect with recruiters over full-duplex WebSocket messaging.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Key Metrics Bar ────────────────────────────────────────────── */}
+        <div className="bg-white dark:bg-[#221C16] border border-[#E9DFD1] dark:border-[#382E25] rounded-xl p-4 max-w-2xl mx-auto mb-10 flex flex-col sm:flex-row items-center justify-around gap-4 text-center">
+          <div>
+            <p className="text-xl font-black text-[#30291F] dark:text-[#F6EFE6]">&lt; 50ms</p>
+            <p className="text-[11px] text-[#74685C] dark:text-[#A89A8A] font-medium">Match Score Latency</p>
+          </div>
+          <div className="hidden sm:block h-6 w-px bg-[#E9DFD1] dark:bg-[#382E25]" />
+          <div>
+            <p className="text-xl font-black text-[#30291F] dark:text-[#F6EFE6]">Real-time</p>
+            <p className="text-[11px] text-[#74685C] dark:text-[#A89A8A] font-medium">ATS &amp; In-App Chat</p>
+          </div>
+          <div className="hidden sm:block h-6 w-px bg-[#E9DFD1] dark:bg-[#382E25]" />
+          <div>
+            <p className="text-xl font-black text-[#30291F] dark:text-[#F6EFE6]">0 Spam</p>
+            <p className="text-[11px] text-[#74685C] dark:text-[#A89A8A] font-medium">Verified Campus &amp; Startup Roles</p>
+          </div>
+        </div>
+
+        {/* Admin Portal Link */}
+        <div className="mb-8">
           <button
             onClick={() => navigate('/auth')}
-            className="inline-flex items-center gap-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 text-sm
-                       transition-colors cursor-pointer font-medium"
+            className="inline-flex items-center gap-1.5 text-xs text-[#74685C] dark:text-[#A89A8A] hover:text-[#30291F] dark:hover:text-[#F6EFE6] transition-colors cursor-pointer"
           >
             <Shield size={13} />
-            Placement Cell?{' '}
-            <span className="underline underline-offset-4 decoration-slate-300 dark:decoration-slate-700">Admin Portal</span>
+            University Placement Cell?{' '}
+            <span className="underline underline-offset-4 decoration-[#D8CBBA] dark:decoration-[#4A3D32]">Admin Portal</span>
           </button>
-        </div>
-
-        {/* Feature trust strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-          {[
-            {
-              icon: <Sparkles size={18} className="text-violet-600 dark:text-violet-400" />,
-              title: 'AI Skill Extraction',
-              desc:  'Automated PDF resume parsing powered by Gemini 2.0 Flash',
-              bg:    'bg-violet-50/70 dark:bg-violet-950/30 border-violet-200/60 dark:border-violet-900/40',
-            },
-            {
-              icon: <Zap size={18} className="text-cyan-600 dark:text-cyan-400" />,
-              title: 'Zero-Token Advice',
-              desc:  'Instant algorithmic skill-gap analysis with actionable projects',
-              bg:    'bg-cyan-50/70 dark:bg-cyan-950/30 border-cyan-200/60 dark:border-cyan-900/40',
-            },
-            {
-              icon: <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400" />,
-              title: 'Real-time ATS & Chat',
-              desc:  'Full-duplex WebSocket messaging and instant applicant rankings',
-              bg:    'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-200/60 dark:border-emerald-900/40',
-            },
-          ].map(({ icon, title, desc, bg }) => (
-            <div
-              key={title}
-              className={`flex flex-col items-center gap-3 p-5 rounded-2xl border ${bg} text-center backdrop-blur-md transition-all hover:scale-[1.02]`}
-            >
-              <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center border border-slate-100 dark:border-slate-800">
-                {icon}
-              </div>
-              <div>
-                <p className="text-slate-900 dark:text-white font-bold text-sm">{title}</p>
-                <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 leading-snug">{desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Social proof strip */}
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-0
-                        divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-slate-800 border border-slate-200/80 dark:border-slate-800
-                        rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm overflow-hidden">
-          {[
-            { value: '<50ms',    label: 'AI Match Latency' },
-            { value: '3 Roles',  label: 'Student · Recruiter · Admin' },
-            { value: '100%',     label: 'Full Realtime Mesh' },
-          ].map(({ value, label }) => (
-            <div key={label} className="flex flex-col items-center gap-0.5 px-10 py-5">
-              <span className="text-2xl font-black text-slate-900 dark:text-white">{value}</span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide font-medium">{label}</span>
-            </div>
-          ))}
         </div>
 
       </div>
+
+      {/* ── Minimal Wellfound-Style Footer ───────────────────────────────── */}
+      <footer className="w-full border-t border-[#E9DFD1] dark:border-[#382E25] mt-auto pt-6 pb-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#74685C] dark:text-[#A89A8A]">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-[#30291F] dark:text-[#F6EFE6]">ZingHire</span>
+            <span>—</span>
+            <span>The modern startup talent marketplace</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <button onClick={() => navigate('/auth')} className="hover:text-[#30291F] dark:hover:text-[#F6EFE6] cursor-pointer">
+              Candidate Login
+            </button>
+            <button onClick={() => navigate('/auth')} className="hover:text-[#30291F] dark:hover:text-[#F6EFE6] cursor-pointer">
+              Recruiter Login
+            </button>
+            <span>&copy; {new Date().getFullYear()} ZingHire Inc.</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

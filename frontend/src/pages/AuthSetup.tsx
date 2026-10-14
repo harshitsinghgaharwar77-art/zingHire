@@ -65,47 +65,50 @@ export default function AuthSetup() {
 
   return (
     <div className="min-h-[calc(100vh-6rem)] flex items-center justify-center p-4 relative">
-      <div className="fixed inset-0 pointer-events-none dot-grid opacity-50" />
+      <div className="fixed inset-0 pointer-events-none dot-grid opacity-40" />
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-violet-400/20 dark:bg-violet-600/15 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-400/20 dark:bg-cyan-600/15 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -left-32 w-80 h-80 bg-warm-terracotta/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-warm-sand/30 dark:bg-warm-darkElevated/30 rounded-full blur-3xl" />
       </div>
 
       <div className="w-full max-w-md animate-fade-in relative z-10">
         {/* Header */}
-        <div className="flex flex-col items-center text-center mb-8">
+        <div className="flex flex-col items-center text-center mb-6">
           <div className="mb-3">
             <Logo size="lg" />
           </div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-            One last step — finish your profile, <span className="font-semibold text-violet-600 dark:text-cyan-400">{email ?? 'friend'}</span>
+          <p className="text-warm-muted dark:text-warm-darkMuted text-xs font-medium">
+            One quick step — complete your profile for <span className="font-semibold text-warm-charcoal dark:text-warm-darkCharcoal">{email || 'your account'}</span>
           </p>
         </div>
 
         {/* Card */}
-        <div className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800 rounded-2xl p-7 sm:p-8 shadow-lg">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Complete your profile</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Takes less than 30 seconds.</p>
+        <div className="wellfound-card p-6 sm:p-8 shadow-sm">
+          <h2 className="text-base font-bold text-warm-charcoal dark:text-warm-darkCharcoal mb-0.5" style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}>
+            Complete your profile
+          </h2>
+          <p className="text-warm-muted dark:text-warm-darkMuted text-xs mb-5">Takes less than 30 seconds to get matched.</p>
 
           <form onSubmit={handleSetup} className="space-y-4">
             {/* Role picker */}
-            <div className="grid grid-cols-2 gap-3 mb-2">
+            <div className="grid grid-cols-2 gap-2.5 mb-2">
               {(['STUDENT', 'RECRUITER'] as Role[]).map((r) => {
                 const Icon = r === 'STUDENT' ? GraduationCap : Briefcase;
+                const isSelected = role === r;
                 return (
                   <button
                     key={r}
                     type="button"
                     onClick={() => setRole(r)}
                     className={cn(
-                      'flex flex-col items-center gap-2 p-3.5 rounded-xl border-2 transition-all duration-200 cursor-pointer',
-                      role === r
-                        ? 'border-violet-500 bg-violet-50/80 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300'
-                        : 'border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-800/60',
+                      'flex flex-col items-center gap-1.5 p-3 rounded-lg border transition-all duration-150 cursor-pointer',
+                      isSelected
+                        ? 'border-warm-terracotta bg-warm-sandTint/70 dark:bg-warm-darkElevated text-warm-charcoal dark:text-warm-darkCharcoal font-bold'
+                        : 'border-warm-border dark:border-warm-darkBorder text-warm-muted dark:text-warm-darkMuted hover:border-warm-sand bg-white dark:bg-warm-darkCard',
                     )}
                   >
-                    <Icon size={22} className={role === r ? 'text-violet-600 dark:text-cyan-400' : ''} />
-                    <span className="text-xs font-bold uppercase tracking-wide">{r}</span>
+                    <Icon size={18} className={isSelected ? 'text-warm-terracotta dark:text-warm-darkTerracotta' : ''} />
+                    <span className="text-[11px] font-bold uppercase tracking-wider">{r}</span>
                   </button>
                 );
               })}
@@ -114,33 +117,31 @@ export default function AuthSetup() {
             {/* Student fields */}
             {role === 'STUDENT' && (
               <>
-                <div className="grid grid-cols-2 gap-3">
-                  <SetupInput label="First Name" value={firstName} onChange={setFirstName} placeholder="Rahul" />
-                  <SetupInput label="Last Name"  value={lastName}  onChange={setLastName}  placeholder="Sharma" />
+                <div className="grid grid-cols-2 gap-2.5">
+                  <SetupInput label="First Name" value={firstName} onChange={setFirstName} placeholder="e.g. Alex" />
+                  <SetupInput label="Last Name"  value={lastName}  onChange={setLastName}  placeholder="e.g. Mercer" />
                 </div>
-                <SetupInput label="College" value={college} onChange={setCollege} placeholder="IIT Bombay" />
-                <SetupInput label="CGPA"    value={cgpa}    onChange={setCgpa}    placeholder="8.5" type="number" />
+                <SetupInput label="University / College" value={college} onChange={setCollege} placeholder="e.g. Stanford University" />
+                <SetupInput label="Current CGPA / Grade"    value={cgpa}    onChange={setCgpa}    placeholder="e.g. 8.5" type="number" />
               </>
             )}
 
             {/* Recruiter fields */}
             {role === 'RECRUITER' && (
               <>
-                <SetupInput label="Company Name" value={companyName} onChange={setCompanyName} placeholder="Acme Corp" />
-                <SetupInput label="Designation"  value={designation} onChange={setDesignation} placeholder="HR Manager" />
+                <SetupInput label="Company Name" value={companyName} onChange={setCompanyName} placeholder="e.g. Acme Ventures" />
+                <SetupInput label="Your Designation"  value={designation} onChange={setDesignation} placeholder="e.g. Talent Lead" />
               </>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-600 text-white font-bold py-3 rounded-xl
-                         hover:shadow-lg hover:shadow-violet-500/25 active:scale-[0.99] transition-all duration-150
-                         disabled:opacity-50 disabled:cursor-not-allowed
-                         flex items-center justify-center gap-2 mt-3 shadow-md text-sm cursor-pointer"
+              className="w-full bg-warm-terracotta hover:bg-warm-terracottaHover text-white font-bold py-2.5 rounded-lg active:scale-[0.99] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4 shadow-sm text-xs cursor-pointer"
+              style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}
             >
-              {loading && <Loader2 size={16} className="animate-spin" />}
-              Enter ZingHire →
+              {loading && <Loader2 size={15} className="animate-spin" />}
+              Enter ZingHire Marketplace →
             </button>
           </form>
         </div>
@@ -149,22 +150,27 @@ export default function AuthSetup() {
   );
 }
 
-function SetupInput({ label, value, onChange, placeholder, type = 'text' }: {
-  label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string;
+function SetupInput({
+  label, value, onChange, placeholder, type = 'text'
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5 uppercase tracking-wider">{label}</label>
+      <label className="type-label block mb-1 text-warm-charcoal dark:text-warm-darkCharcoal">
+        {label}
+      </label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required
-        className="w-full bg-slate-50/80 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5
-                   text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500
-                   focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20
-                   transition-colors"
+        className="w-full bg-white dark:bg-warm-darkElevated border border-warm-border dark:border-warm-darkBorder rounded-lg px-3.5 py-2 text-xs text-warm-charcoal dark:text-warm-darkCharcoal placeholder-warm-muted/60 focus:outline-none focus:border-warm-terracotta focus:ring-1 focus:ring-warm-terracotta transition-all"
       />
     </div>
   );

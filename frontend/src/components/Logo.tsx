@@ -44,8 +44,8 @@ export const Logo: React.FC<LogoProps> = ({ className, size = 'md', showText = t
       </div>
       {showText && (
         <span className={cn('font-black tracking-tight flex items-center', textSizes[size])}>
-          <span className="text-slate-900 dark:text-white transition-colors">Zing</span>
-          <span className="bg-gradient-to-r from-violet-600 to-cyan-500 bg-clip-text text-transparent dark:from-violet-400 dark:to-cyan-400">
+          <span className="text-[#30291F] dark:text-[#F6EFE6] transition-colors">Zing</span>
+          <span className="text-[#B85C38] dark:text-[#D9734E] ml-0.5 transition-colors">
             Hire
           </span>
         </span>
