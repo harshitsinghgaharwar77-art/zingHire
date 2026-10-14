@@ -109,7 +109,7 @@ export default function Landing() {
               </p>
             </div>
             <button
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate('/auth?tab=register&role=STUDENT')}
               className="btn-primary text-xs !py-2 !px-3.5 w-fit flex items-center gap-1.5 cursor-pointer"
             >
               Join as Candidate
@@ -129,7 +129,7 @@ export default function Landing() {
               </p>
             </div>
             <button
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate('/auth?tab=register&role=RECRUITER')}
               className="btn-secondary text-xs !py-2 !px-3.5 w-fit flex items-center gap-1.5 cursor-pointer"
             >
               Post a Role
@@ -219,10 +219,10 @@ export default function Landing() {
             <span>The modern startup talent marketplace</span>
           </div>
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/auth')} className="hover:text-[#30291F] dark:hover:text-[#F6EFE6] cursor-pointer">
+            <button onClick={() => navigate('/auth?tab=login&role=STUDENT')} className="hover:text-[#30291F] dark:hover:text-[#F6EFE6] cursor-pointer">
               Candidate Login
             </button>
-            <button onClick={() => navigate('/auth')} className="hover:text-[#30291F] dark:hover:text-[#F6EFE6] cursor-pointer">
+            <button onClick={() => navigate('/auth?tab=login&role=RECRUITER')} className="hover:text-[#30291F] dark:hover:text-[#F6EFE6] cursor-pointer">
               Recruiter Login
             </button>
             <span>&copy; {new Date().getFullYear()} ZingHire Inc.</span>

@@ -171,7 +171,7 @@ export default function Layout() {
                 <ThemeToggle />
 
                 <Link
-                  to="/auth"
+                  to="/auth?tab=login"
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium
                              text-[#544A3E] dark:text-[#D8CEBF] hover:text-[#30291F] dark:hover:text-[#F6EFE6] hover:bg-[#F3EBDD] dark:hover:bg-[#2C241D] transition-colors"
                 >
@@ -179,7 +179,7 @@ export default function Layout() {
                   Log in
                 </Link>
                 <Link
-                  to="/auth"
+                  to="/auth?tab=register"
                   className="btn-primary text-sm !py-1.5 !px-3.5"
                 >
                   <UserPlus size={15} />
@@ -260,7 +260,7 @@ export default function Layout() {
             ) : (
               <div className="flex flex-col gap-2 pt-1">
                 <Link
-                  to="/auth"
+                  to="/auth?tab=login"
                   onClick={() => setMenuOpen(false)}
                   className="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-sm font-medium
                              text-[#30291F] dark:text-[#F6EFE6] bg-[#F3EBDD] dark:bg-[#2C241D] hover:bg-[#ECE3D3] transition-colors"
@@ -269,7 +269,7 @@ export default function Layout() {
                   Log in
                 </Link>
                 <Link
-                  to="/auth"
+                  to="/auth?tab=register"
                   onClick={() => setMenuOpen(false)}
                   className="btn-primary text-center justify-center w-full"
                 >

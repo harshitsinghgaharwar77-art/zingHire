@@ -21,7 +21,7 @@ type Tab = 'login' | 'register';
 
 export default function Auth() {
   const navigate        = useNavigate();
-  const [searchParams]  = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const setAuth         = useAuthStore((s) => s.setAuth);
 
   // Show error toast if Google OAuth failed
@@ -31,8 +31,36 @@ export default function Auth() {
     }
   }, [searchParams]);
 
-  const [tab,        setTab]        = useState<Tab>('login');
-  const [role,       setRole]       = useState<Role>('STUDENT');
+  const urlTab = searchParams.get('tab') || searchParams.get('mode');
+  const initialTab: Tab = (urlTab === 'register' || urlTab === 'signup') ? 'register' : 'login';
+  const [tab, setTab] = useState<Tab>(initialTab);
+
+  const urlRole = searchParams.get('role');
+  const initialRole: Role = urlRole?.toUpperCase() === 'RECRUITER' ? 'RECRUITER' : 'STUDENT';
+  const [role, setRole] = useState<Role>(initialRole);
+
+  // Sync tab and role whenever URL query params change (e.g. clicking Sign up in navbar)
+  useEffect(() => {
+    const t = searchParams.get('tab') || searchParams.get('mode');
+    if (t === 'register' || t === 'signup') {
+      setTab('register');
+    } else if (t === 'login' || t === 'signin') {
+      setTab('login');
+    }
+    const r = searchParams.get('role');
+    if (r?.toUpperCase() === 'RECRUITER') {
+      setRole('RECRUITER');
+    } else if (r?.toUpperCase() === 'STUDENT') {
+      setRole('STUDENT');
+    }
+  }, [searchParams]);
+
+  const handleSwitchTab = (newTab: Tab) => {
+    setTab(newTab);
+    const next = new URLSearchParams(searchParams);
+    next.set('tab', newTab);
+    setSearchParams(next, { replace: true });
+  };
   const [email,      setEmail]      = useState('');
   const [password,   setPassword]   = useState('');
   const [showPass,   setShowPass]   = useState(false);
@@ -122,7 +150,8 @@ export default function Auth() {
             {(['login', 'register'] as Tab[]).map((t) => (
               <button
                 key={t}
-                onClick={() => setTab(t)}
+                type="button"
+                onClick={() => handleSwitchTab(t)}
                 className={cn(
                   'flex-1 py-1.5 rounded-md text-xs font-semibold transition-all duration-150 cursor-pointer',
                   tab === t
@@ -241,7 +270,8 @@ export default function Auth() {
             <p className="text-xs text-warm-muted dark:text-warm-darkMuted">
               {tab === 'login' ? "Don't have an account yet?" : 'Already have an account?'}{' '}
               <button
-                onClick={() => setTab(tab === 'login' ? 'register' : 'login')}
+                type="button"
+                onClick={() => handleSwitchTab(tab === 'login' ? 'register' : 'login')}
                 className="text-warm-terracotta dark:text-warm-darkTerracotta font-semibold hover:underline cursor-pointer"
               >
                 {tab === 'login' ? 'Sign Up' : 'Sign In'}
