@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   GraduationCap,
@@ -12,6 +12,15 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
+const TYPEWRITER_WORDS = [
+  'forward-thinking',
+  'high-growth',
+  'YC-backed',
+  'AI-first',
+  'ambitious',
+  'breakthrough',
+];
+
 /**
  * Landing Page — Wellfound-Inspired Startup Job Discovery & Marketplace
  * Warm Ivory (#FAF6EF) + Muted Terracotta (#B85C38) + Warm Charcoal (#30291F)
@@ -20,6 +29,35 @@ export default function Landing() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState<string>('All');
+
+  // ── Typewriter Effect ──────────────────────────────────────────────────────
+  const [wordIdx, setWordIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentWord = TYPEWRITER_WORDS[wordIdx % TYPEWRITER_WORDS.length]!;
+
+    if (!isDeleting && charIdx === currentWord.length) {
+      // Pause at full word
+      const timer = setTimeout(() => setIsDeleting(true), 2000);
+      return () => clearTimeout(timer);
+    }
+
+    if (isDeleting && charIdx === 0) {
+      // Pause before typing next word
+      setIsDeleting(false);
+      setWordIdx((prev) => (prev + 1) % TYPEWRITER_WORDS.length);
+      return;
+    }
+
+    const speed = isDeleting ? 40 : 85;
+    const timer = setTimeout(() => {
+      setCharIdx((prev) => prev + (isDeleting ? -1 : 1));
+    }, speed);
+
+    return () => clearTimeout(timer);
+  }, [charIdx, isDeleting, wordIdx]);
 
   const POPULAR_TAGS = ['All', 'Full Stack', 'Frontend', 'Backend', 'Python', 'React', 'AI / ML', 'Remote'];
 
@@ -39,10 +77,17 @@ export default function Landing() {
           <span>The Campus & Startup Hiring Marketplace</span>
         </div>
 
-        {/* Main Heading */}
+        {/* Main Heading with Typewriter */}
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-[#30291F] dark:text-[#F6EFE6] leading-[1.12] mb-5">
           Where top talent meets <br className="hidden sm:inline" />
-          <span className="text-[#B85C38] dark:text-[#D9734E]">forward-thinking</span> startups.
+          <span className="text-[#B85C38] dark:text-[#D9734E] inline-flex items-center">
+            <span>{TYPEWRITER_WORDS[wordIdx % TYPEWRITER_WORDS.length]!.slice(0, charIdx)}</span>
+            <span
+              className="ml-1 inline-block w-[3px] h-[0.82em] bg-[#B85C38] dark:bg-[#D9734E] rounded-full animate-pulse align-middle"
+              aria-hidden="true"
+            />
+          </span>{' '}
+          startups.
         </h1>
 
         {/* Subtitle */}
