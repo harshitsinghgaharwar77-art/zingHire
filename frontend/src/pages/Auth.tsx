@@ -241,11 +241,11 @@ export default function Auth() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-warm-terracotta hover:bg-warm-terracottaHover text-white font-bold py-2.5 rounded-lg active:scale-[0.99] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4 shadow-sm text-xs cursor-pointer"
+              className="btn-primary w-full !py-2.5 text-xs font-bold active:scale-[0.99] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4 shadow-sm cursor-pointer !bg-[#B85C38] hover:!bg-[#9F4A29] !text-white"
               style={{ fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }}
             >
-              {loading && <Loader2 size={15} className="animate-spin" />}
-              {tab === 'login' ? 'Sign In' : 'Create Account'}
+              {loading && <Loader2 size={15} className="animate-spin text-white" />}
+              <span>{tab === 'login' ? 'Sign In' : 'Create Account'}</span>
             </button>
           </form>
 

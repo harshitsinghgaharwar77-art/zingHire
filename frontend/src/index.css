@@ -3,6 +3,33 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .dark, .dark *));
 
+@theme {
+  --color-warm-canvas: #FAF6EF;
+  --color-warm-card: #FFFFFF;
+  --color-warm-sand: #E9DFD1;
+  --color-warm-sand-tint: #F3EBDD;
+  --color-warm-sandTint: #F3EBDD;
+  --color-warm-charcoal: #30291F;
+  --color-warm-muted: #74685C;
+  --color-warm-border: #E9DFD1;
+  --color-warm-terracotta: #B85C38;
+  --color-warm-terracotta-hover: #9F4A29;
+  --color-warm-terracottaHover: #9F4A29;
+
+  --color-warm-darkCard: #221C16;
+  --color-warm-dark-card: #221C16;
+  --color-warm-darkElevated: #2E251E;
+  --color-warm-dark-elevated: #2E251E;
+  --color-warm-darkBorder: #382E25;
+  --color-warm-dark-border: #382E25;
+  --color-warm-darkCharcoal: #F6EFE6;
+  --color-warm-dark-charcoal: #F6EFE6;
+  --color-warm-darkMuted: #A89887;
+  --color-warm-dark-muted: #A89887;
+  --color-warm-darkTerracotta: #D9734E;
+  --color-warm-dark-terracotta: #D9734E;
+}
+
 /* ============================================================
    ZingHire — Wellfound-Inspired Warm Design System
    Warm Ivory (#FAF6EF) + Muted Terracotta (#B85C38) + Warm Charcoal (#30291F)
