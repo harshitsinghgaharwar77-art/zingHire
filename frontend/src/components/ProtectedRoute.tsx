@@ -20,9 +20,13 @@ export default function ProtectedRoute({ allowedRoles }: Props) {
   // Not authenticated → send to landing
   if (!isAuth) return <Navigate to="/" replace />;
 
-  // Role mismatch → send to their own dashboard
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    const fallback = user.role === 'STUDENT' ? '/student' : '/recruiter';
+    const fallback =
+      user.role === 'STUDENT'
+        ? '/student'
+        : user.role === 'ADMIN'
+        ? '/admin'
+        : '/recruiter';
     return <Navigate to={fallback} replace />;
   }
 

@@ -92,7 +92,13 @@ export default function Auth() {
 
         setAuth(res.data.token, res.data.user);
         toast.success('Welcome back to ZingHire! 🎉');
-        navigate(res.data.user.role === 'STUDENT' ? '/student' : '/recruiter');
+        navigate(
+          res.data.user.role === 'STUDENT'
+            ? '/student'
+            : res.data.user.role === 'ADMIN'
+            ? '/admin'
+            : '/recruiter'
+        );
       } else {
         const payload =
           role === 'STUDENT'
