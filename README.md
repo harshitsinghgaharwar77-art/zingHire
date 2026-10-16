@@ -177,7 +177,7 @@ The platform coordinates real-time state using a multi-tenant room architecture.
 
 ## 🗄️ Database Schema & ERD
 
-CareerNest utilizes **PostgreSQL** configured via **Prisma ORM** with indexes on foreign keys and frequently queried status fields.
+ZingHire utilizes **PostgreSQL** configured via **Prisma ORM** with indexes on foreign keys and frequently queried status fields.
 
 ```mermaid
 erDiagram
@@ -340,7 +340,7 @@ All protected routes require an `Authorization: Bearer <token>` HTTP header.
 ## 🗂️ Project Structure
 
 ```
-career-nest/
+zingHire/
 ├── backend/
 │   ├── prisma/
 │   │   ├── schema.prisma              # Relational models, enums & foreign keys
@@ -407,12 +407,12 @@ career-nest/
 
 ## 🔐 Environment Variables
 
-Create a `.env` file in `career-nest/backend/.env`:
+Create a `.env` file in `backend/.env`:
 
 | Key | Description | Example / Default | Required |
 |:---|:---|:---|:---:|
 | `PORT` | Node.js backend port | `5001` | ✅ |
-| `DATABASE_URL` | PostgreSQL connection URL | `postgresql://postgres:password@localhost:5432/careernest` | ✅ |
+| `DATABASE_URL` | PostgreSQL connection URL | `postgresql://postgres:password@localhost:5432/zinghire` | ✅ |
 | `REDIS_URL` | Redis URL for caching & BullMQ queues | `redis://localhost:6379` or `rediss://...` | ✅ |
 | `JWT_SECRET` | Secret key used for signing JWT tokens | `your_super_secret_jwt_key` | ✅ |
 | `JWT_EXPIRES_IN` | Token duration | `7d` | ✅ |
@@ -444,8 +444,8 @@ Create a `.env` file in `career-nest/backend/.env`:
 
 ### 1. Clone & Navigate
 ```bash
-git clone https://github.com/yourusername/career-nest.git
-cd career-nest
+git clone https://github.com/harshitsinghgaharwar77-art/zingHire.git
+cd zingHire
 ```
 
 ### 2. Backend Initialization
