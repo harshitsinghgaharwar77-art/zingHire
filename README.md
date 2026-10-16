@@ -38,9 +38,12 @@
 
 | | |
 |:---:|:---:|
-| ![Landing Page](screenshots/landing.png) <br /> **Executive Landing** — Modern hero, live trust strip, & role access | ![Auth Page](screenshots/auth-login.png) <br /> **Authentication** — Dual-mode login & OAuth 2.0 social sync |
-| ![Student Dashboard](screenshots/student-dashboard.png) <br /> **Candidate Terminal** — Ranked job feed, real-time alerts | ![Recruiter Dashboard](screenshots/recruiter-dashboard.png) <br /> **Recruiter Command Center** — Dynamic job creation & applicant ranks |
-| ![Skill Gap Analysis](screenshots/student-dashboard-bottom.png) <br /> **Zero-Token Skill Advisor** — Instant project roadmaps | ![Admin Panel](screenshots/admin-dashboard.png) <br /> **Placement Governance** — Institutional metrics & candidate oversight |
+| ![Landing Page](screenshots/landing.png) <br /> **Executive Landing** — Modern hero, live trust strip, & role access | ![Feature Overview](screenshots/landing2.png) <br /> **Platform Capabilities** — Real-time workflows & AI features |
+| ![Authentication](screenshots/auth-login.png) <br /> **Dual-Mode Sign In** — Secure JWT authentication & OAuth 2.0 | ![Registration](screenshots/auth-register.png) <br /> **Onboarding & Role Picker** — Student & Recruiter registration |
+| ![Candidate Terminal](screenshots/student-dashboard.png) <br /> **Student Terminal** — Live ranked job feed & instant eligibility | ![Skill Advisor](screenshots/student-dashboard-bottom.png) <br /> **Skill Gap Advisor** — Instant project & learning roadmap |
+| ![Recruiter Dashboard](screenshots/recruiter-dashboard.png) <br /> **Recruiter Command Center** — Active openings & candidate metrics | ![Job Posting](screenshots/recruiter-posting.png) <br /> **AI Job Creation** — Natural language requirement extraction |
+| ![Applicant Review](screenshots/applicant-tracking.png) <br /> **Applicant Tracking** — Real-time candidate evaluation | ![Pipeline Review](screenshots/recruiter-dashboard-2.png) <br /> **Talent Pipeline** — Role-based applicant shortlisting |
+| ![Admin Dashboard](screenshots/admin-dashboard.png) <br /> **Placement Governance** — Institutional statistics & platform metrics | ![Admin Management](screenshots/admin-panel.png) <br /> **Platform Moderation** — Campus-wide oversight & controls |
 
 ---
 
